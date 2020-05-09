@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unordered_map>
+#include <string>
 using namespace std;
 
 
@@ -29,9 +30,17 @@ public:
 	void insert(char x){
 		// insere palavra a palavra
 	}
-	
-	
-	
+		
+	//Checa se é um caractere válido (está no alfabeto utilizado)
+	bool is_wordchar(char c){
+	    return (('a' <= c && c <= 'z') or ('0' <= c && c <= '9'));
+	}
+		
+
+	//Função para checar se uma string é válida antes de adicioná-la á àrvore 
+	bool is_word(string s){
+		return true;
+	}
 };
 
 int main() {
