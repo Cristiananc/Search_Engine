@@ -23,11 +23,20 @@ private:
 public:
 	Trie():pRoot(nullptr) {}
 	
-	bool find(){
+	bool find(char w,Node **&p){
+		p = &pRoot;
+		
+		
 		// checa se alguma parte da palavra já foi inserida
 	}
 	
 	void insert(char x){
+		Node **p;
+		for(int i = 0 ; i >= sizeof(x)/x[0] ; i++){
+			if (!find(x[i], p)) { 
+	            *p = new Node(x);
+	        }
+		}
 		// insere palavra a palavra
 	}
 		
