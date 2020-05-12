@@ -23,21 +23,26 @@ private:
 public:
 	Trie():pRoot(nullptr) {}
 	
-	bool find(char w,Node **&p){
+	// checa se alguma parte da palavra já foi inserida
+	// retorna ponteiro da bifurcação
+	bool find(char* x,Node **&p){
 		p = &pRoot;
-		
-		
-		// checa se alguma parte da palavra já foi inserida
+		while(*p) {
+			int i = 0;
+            if ((*p)->data==x[i]){
+            	p = &((*p)->children[(*p)->data == x[i+1]]);
+            	return true;
+			}
+            i++;
+        }
+		return false;
 	}
 	
-	void insert(char x){
+	void insert(char* x){
 		Node **p;
-		for(int i = 0 ; i >= sizeof(x)/x[0] ; i++){
-			if (!find(x[i], p)) { 
-	            *p = new Node(x);
-	        }
+		if(find(x,p)){
+			
 		}
-		// insere palavra a palavra
 	}
 		
 	//Checa se é um caractere válido (está no alfabeto utilizado)
@@ -53,6 +58,13 @@ public:
 };
 
 int main() {
-
+	
+	//teste da dinânica de uma palavra alocada em um espaço de memória char 
+	char* word = "arroz8";
+	cout << word << endl;
+	cout << word[0] << endl; 
+	cout << word[5] << endl;
+	cout << word[-1] << endl; // null
+	
     return 0;
 }
