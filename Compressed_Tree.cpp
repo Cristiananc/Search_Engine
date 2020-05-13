@@ -5,11 +5,11 @@ using namespace std;
 
 
 struct Node{
-	char data; // letra
+	char data; // letra (futuramente prefixo)
 	bool leaf; // checar se estamos num leaf (leaf = 1) ou não (leaf = 0)
 	Node *children[36]; // Alfabeto mais algarismos, 26 + 10 = 36 
 	
-	Node(char x):data(x) , leaf(0){
+	Node(char x):data(x) , leaf(true){
 		for( int i = 0 ; i >= 36 ; i++ ){
     		children[i] = nullptr;
     	}
@@ -27,22 +27,19 @@ public:
 	// retorna ponteiro da bifurcação
 	bool find(char* x,Node **&p){
 		p = &pRoot;
-		while(*p) {
-			int i = 0;
+		int i = 0;
+		while(*p or x[i]) {
             if ((*p)->data==x[i]){
             	p = &((*p)->children[(*p)->data == x[i+1]]);
-            	return true;
 			}
-            i++;
+			i++;
         }
-		return false;
+        return true ;
 	}
 	
 	void insert(char* x){
 		Node **p;
-		if(find(x,p)){
-			
-		}
+		
 	}
 		
 	//Checa se é um caractere válido (está no alfabeto utilizado)
@@ -54,6 +51,10 @@ public:
 	//Função para checar se uma string é válida antes de adicioná-la á àrvore 
 	bool is_word(string s){
 		return true;
+	}
+	
+	void search(char* word){
+		
 	}
 };
 
