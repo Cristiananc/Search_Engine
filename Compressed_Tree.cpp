@@ -1,38 +1,35 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include <vector>
 #include <fstream> //Work with files
 using namespace std;
 
-//Precisamos de uma função pra serializar e pra desserializar
-//Função que adiciona todas as palavras do arquivo texto
-//Função que recebe a pesquisa do usuario e limpa a pesquisa
-//Sugestão de palavra
+//Precisamos de uma funï¿½ï¿½o pra serializar e pra desserializar
+//Funï¿½ï¿½o que adiciona todas as palavras do arquivo texto
+//Funï¿½ï¿½o que recebe a pesquisa do usuario e limpa a pesquisa
+//Sugestï¿½o de palavra
 //Devolve o arquivo
-//Ordena as páginas
+//Ordena as pï¿½ginas
 
 
 struct Node{
-	char data; // letra (futuramente prefixo)
-	bool leaf; // checar se estamos num leaf (leaf = 1) ou não (leaf = 0)
+	vector<int> documents;
 	Node *children[36]; // Alfabeto mais algarismos, 26 + 10 = 36 
 	
-	Node(char x):data(x) , leaf(true){
-		for( int i = 0 ; i >= 36 ; i++ ){
-    		children[i] = nullptr;
+	Node () {for(int i = 0 ; i < 36 ; i++ ){
+    	children[i] = nullptr;
     	}
-    }
 };
 
 class Trie{
-private:
-	Node *pRoot;
 	
 public:
-	Trie():pRoot(nullptr) {}
-	
-	// checa se alguma parte da palavra já foi inserida
-	// retorna ponteiro da bifurcação
+	Node *pRoot = new Node;
+	Trie() {}
+
+	// checa se alguma parte da palavra jÃ¡ foi inserida
+	// retorna ponteiro da bifurcaÃ§Ã£o
 	bool find(char* x,Node **&p){
 		p = &pRoot;
 		int i = 0;
@@ -45,22 +42,19 @@ public:
         return true ;
 	}
 	
-	//Função auxiliar pra definir o index
-	
+	//Auxiliar function to find index
 	int index(char c){
 	    if ('a' <= c && c <= 'z'){int index = c - 'a';}
     		else{int index = c - 'a' + 'z';}
 	}
 	
-	//Erro de segmentação
-	void insert(string word){
+	void insert(string word){	
 		Node *p = pRoot;
 		Node *pChar;
-		//Só preciso fazer o insert se a busca da palavra deu falso no search
 		for (int i = 0; i < word.length() ; i++){
 		    int ind = index(word[i]);
     		if(p -> children[ind] == nullptr){
-    		    pChar = new Node(word[i]);
+    		    pChar = new Node();
     		    p -> children[ind] = pChar;
     		}
     	    p = p -> children[ind];
@@ -68,25 +62,24 @@ public:
 		//end of word
 	}
 		
-	//Checa se é um caractere válido (está no alfabeto utilizado)
+	//Checa se ï¿½ um caractere vï¿½lido (estï¿½ no alfabeto utilizado)
 	bool is_wordchar(char c){
 	    return (('a' <= c && c <= 'z') or ('0' <= c && c <= '9'));
 	}
 		
 
-	//Função para checar se uma string é válida antes de adicioná-la á àrvore 
-	bool is_word(string s){
+	//Funï¿½ï¿½o para checar se uma string ï¿½ vï¿½lida antes de adicionï¿½-la ï¿½ ï¿½rvore 
+	bool is_word(string word){
 		return true;
 	}
 	
-	void search(char* word){
+	void search(string word){
 		
 	}
 };
 
 int main() {
-
-	//teste da dinânica de uma palavra alocada em um espaço de memória char 
+	//teste da dinÃ¢nica de uma palavra alocada em um espaÃ§o de memÃ³ria char 
 	char* word = "arroz8";
 	cout << word << endl;
 	cout << word[0] << endl; 
@@ -94,7 +87,7 @@ int main() {
 	cout << word[-1] << endl; // null
 	
 	Trie Trie;
-	Trie.insert("oi");
+	Trie.insert("ab");
 	
     return 0;
 }
