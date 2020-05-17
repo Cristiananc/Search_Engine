@@ -1,7 +1,15 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include <fstream> //Work with files
 using namespace std;
+
+//Precisamos de uma função pra serializar e pra desserializar
+//Função que adiciona todas as palavras do arquivo texto
+//Função que recebe a pesquisa do usuario e limpa a pesquisa
+//Sugestão de palavra
+//Devolve o arquivo
+//Ordena as páginas
 
 
 struct Node{
@@ -37,9 +45,27 @@ public:
         return true ;
 	}
 	
-	void insert(char* x){
-		Node **p;
-		
+	//Função auxiliar pra definir o index
+	
+	int index(char c){
+	    if ('a' <= c && c <= 'z'){int index = c - 'a';}
+    		else{int index = c - 'a' + 'z';}
+	}
+	
+	//Erro de segmentação
+	void insert(string word){
+		Node *p = pRoot;
+		Node *pChar;
+		//Só preciso fazer o insert se a busca da palavra deu falso no search
+		for (int i = 0; i < word.length() ; i++){
+		    int ind = index(word[i]);
+    		if(p -> children[ind] == nullptr){
+    		    pChar = new Node(word[i]);
+    		    p -> children[ind] = pChar;
+    		}
+    	    p = p -> children[ind];
+		}
+		//end of word
 	}
 		
 	//Checa se é um caractere válido (está no alfabeto utilizado)
@@ -59,13 +85,16 @@ public:
 };
 
 int main() {
-	
+
 	//teste da dinânica de uma palavra alocada em um espaço de memória char 
 	char* word = "arroz8";
 	cout << word << endl;
 	cout << word[0] << endl; 
 	cout << word[5] << endl;
 	cout << word[-1] << endl; // null
+	
+	Trie Trie;
+	Trie.insert("oi");
 	
     return 0;
 }
