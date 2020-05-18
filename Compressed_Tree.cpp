@@ -12,14 +12,16 @@ using namespace std;
 //Devolve o arquivo
 //Ordena as p�ginas
 
+const int ALPHABET_SIZE = 36;
 
 struct Node{
 	vector<int> documents;
-	Node *children[36]; // Alfabeto mais algarismos, 26 + 10 = 36 
+	Node *children[ALPHABET_SIZE]; // Alfabeto mais algarismos, 26 + 10 = 36 
 	
 	Node () {for(int i = 0 ; i < 36 ; i++ ){
     	children[i] = nullptr;
     	}
+	}
 };
 
 class Trie{
@@ -30,25 +32,25 @@ public:
 
 	// checa se alguma parte da palavra já foi inserida
 	// retorna ponteiro da bifurcação
-	bool find(char* x,Node **&p){
-		p = &pRoot;
-		int i = 0;
-		while(*p or x[i]) {
-            if ((*p)->data==x[i]){
-            	p = &((*p)->children[(*p)->data == x[i+1]]);
-			}
-			i++;
-        }
-        return true ;
-	}
+	// bool find(char* x,Node **&p){
+	// 	p = &pRoot;
+	// 	int i = 0;
+	// 	while(*p or x[i]) {
+    //         if ((*p)->data==x[i]){
+    //         	p = &((*p)->children[(*p)->data == x[i+1]]);
+	// 		}
+	// 		i++;
+    //     }
+    //     return true ;
+	// }
 	
-	//Auxiliar function to find index
+	//Auxiliar function to find corresponding index
 	int index(char c){
 	    if ('a' <= c && c <= 'z'){int index = c - 'a';}
     		else{int index = c - 'a' + 'z';}
 	}
 	
-	void insert(string word){	
+	void insert(string word, int docId){	
 		Node *p = pRoot;
 		Node *pChar;
 		for (int i = 0; i < word.length() ; i++){
@@ -60,6 +62,7 @@ public:
     	    p = p -> children[ind];
 		}
 		//end of word
+		(p -> documents).push_back(docId);
 	}
 		
 	//Checa se � um caractere v�lido (est� no alfabeto utilizado)
@@ -87,7 +90,8 @@ int main() {
 	cout << word[-1] << endl; // null
 	
 	Trie Trie;
-	Trie.insert("ab");
+	int docId = 2;
+	Trie.insert("ab", docId);
 	
     return 0;
 }
