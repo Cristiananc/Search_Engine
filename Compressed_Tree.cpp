@@ -1,5 +1,4 @@
 #include <iostream>
-#include <unordered_map>
 #include <string>
 #include <vector>
 #include <fstream> //Work with files
@@ -18,7 +17,7 @@ struct Node{
 	vector<int> documents;
 	Node *children[ALPHABET_SIZE]; // Alfabeto mais algarismos, 26 + 10 = 36 
 	
-	Node () {for(int i = 0 ; i < 36 ; i++ ){
+	Node () {for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
     	children[i] = nullptr;
     	}
 	}
@@ -29,20 +28,6 @@ class Trie{
 public:
 	Node *pRoot = new Node;
 	Trie() {}
-
-	// checa se alguma parte da palavra já foi inserida
-	// retorna ponteiro da bifurcação
-	// bool find(char* x,Node **&p){
-	// 	p = &pRoot;
-	// 	int i = 0;
-	// 	while(*p or x[i]) {
-    //         if ((*p)->data==x[i]){
-    //         	p = &((*p)->children[(*p)->data == x[i+1]]);
-	// 		}
-	// 		i++;
-    //     }
-    //     return true ;
-	// }
 	
 	//Auxiliar function to find corresponding index
 	int index(char c){
@@ -79,15 +64,28 @@ public:
 	void search(string word){
 		
 	}
+	
+	void serializacao(string name){
+		ofstream file;
+		file.open(name);
+		Node * pNode = pRoot;
+		exec_serializacao(pNode, file);
+	}
+	
+	void exec_serializacao(Node * pCur, ofstream & file){
+		for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
+			if (pCur -> children[i] != nullptr){
+				file << i << " ";
+				//file << pCur -> documents << " "; // necess�rio iterar por cada vector
+				//cout << ... << endl;
+				exec_serializacao(pCur-> children[i], file);
+			}	
+		}
+		file << "] ";
+	}
 };
 
 int main() {
-	//teste da dinânica de uma palavra alocada em um espaço de memória char 
-	char* word = "arroz8";
-	cout << word << endl;
-	cout << word[0] << endl; 
-	cout << word[5] << endl;
-	cout << word[-1] << endl; // null
 	
 	Trie Trie;
 	int docId = 2;
