@@ -80,46 +80,16 @@ public:
 	void exec_serializacao(Node * pCur, ofstream & file){
 		for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
 			if (pCur -> children[i] != nullptr){
-				file << i ;
-				for(int j = 0 ; j < (pCur->documents).size(); j++ ){// nao ta escrevendo no file
-					file << " " << (pCur -> documents)[j] << " ";
+				file << " " << i;
+				for(std::vector<int>::iterator it = (pCur->documents).begin() ; it != (pCur->documents).end(); ++it){
+					file << "|" << *it;
 				}
 				exec_serializacao(pCur-> children[i], file);
 			}	
 		}
 		file << "]";
 	}
-	
-	void disserializacao(string name){
-		ifstream file;
-		string line;
-        file.open(name); 
-        getline(file, line); 
-        Node ** pNode = &pRoot; 
-        stringstream split; 
-        split << line;
-        exec_pRoot_disserializacao(pNode, split);
-	}
-	
-	void exec_pRoot_disserializacao(Node ** pNode, stringstream & split){
-        string cur_word;
-        while(split >> cur_word){
-            if(exec_disserializacao(pNode, cur_word, split)) break;
-        }
-    }
-    
-    bool exec_disserializacao(Node ** pNode, string cur_word, stringstream  & split){
-        if(cur_word == "]") return 1;
-        
-        //Node * pNew = new Node(cur_word);
-        //(*pNode)->children[cur_word] = pNew;
-        //pNode = &(*pNode)->children[cur_word];
-        
-        while(split >> cur_word){
-            if(exec_disserializacao(pNode, cur_word, split)) break;
-        }
-        return 0;
-    }
+
 };
 
 int main() {
@@ -127,10 +97,10 @@ int main() {
 	Trie Trie;
 	int docId1 = 8;
 	int docId2 = 9;
-	Trie.insert("abc4", docId1);
-	Trie.insert("abd",docId2);
+	Trie.insert("banana", docId1);
+	Trie.insert("ba",docId2);
 	
-	Trie.serializacao("serializa��o");
+	Trie.serializacao("serializa");
 	
     return 0;
 }
