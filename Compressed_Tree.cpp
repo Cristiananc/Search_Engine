@@ -32,8 +32,12 @@ public:
 	
 	//Auxiliar function to find corresponding index
 	int index(char c){
-	    if ('a' <= c && c <= 'z'){int index = c - 'a';}
-    		else{int index = c - 'a' + 'z';}
+	    if ('a' <= c && c <= 'z'){
+			int index = c - 'a' + 10;
+			}
+    	else if ('0' <= c && c <= '9'){
+			int index = c - '0';
+		}
 	}
 	
 	void insert(string word, int docId){	
@@ -123,10 +127,10 @@ int main() {
 	Trie Trie;
 	int docId1 = 8;
 	int docId2 = 9;
-	Trie.insert("abc", docId1);
+	Trie.insert("abc4", docId1);
 	Trie.insert("abd",docId2);
 	
-	Trie.serializacao("serialização");
+	Trie.serializacao("serializaï¿½ï¿½o");
 	
     return 0;
 }
