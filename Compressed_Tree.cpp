@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 #include <fstream> //Work with files
 using namespace std;
 
@@ -85,9 +86,36 @@ public:
 		file << "]";
 	}
 	
-//	void disserializacao(){
-//		
-//	}
+	void disserializacao(string name){
+		ifstream file;
+		string line;
+        file.open(name); 
+        getline(file, line); 
+        Node ** pNode = &pRoot; 
+        stringstream split; 
+        split << line;
+        exec_pRoot_disserializacao(pNode, split);
+	}
+	
+	void exec_pRoot_disserializacao(Node ** pNode, stringstream & split){
+        string cur_word;
+        while(split >> cur_word){
+            if(exec_disserializacao(pNode, cur_word, split)) break;
+        }
+    }
+    
+    bool exec_disserializacao(Node ** pNode, string cur_word, stringstream  & split){
+        if(cur_word == "]") return 1;
+        
+        //Node * pNew = new Node(cur_word);
+        //(*pNode)->children[cur_word] = pNew;
+        //pNode = &(*pNode)->children[cur_word];
+        
+        while(split >> cur_word){
+            if(exec_disserializacao(pNode, cur_word, split)) break;
+        }
+        return 0;
+    }
 };
 
 int main() {
