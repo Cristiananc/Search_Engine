@@ -4,16 +4,44 @@
 #include <algorithm>
 using namespace std;
 
-//Checks if a char belongs to the alphabet being used.
-bool is_alphabetchar(char c){
-	    return (('a' <= c && c <= 'z') or ('0' <= c && c <= '9'));
-}
-bool is_uppercase(char c){
-    return ('A' <= c && c <= 'Z');
-}
+const int ALPHABET_SIZE = 36;
 
-//Clean the user-input considering the alphabet used in the trie and split words if necessary 
-vector<string> clean_input(string words){
+struct Node{
+	vector<int> documents;
+	Node *children[ALPHABET_SIZE]; // Alfabeto mais algarismos, 26 + 10 = 36 
+	
+	Node () {for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
+    	children[i] = nullptr;
+    	}
+	}
+};
+
+class Trie{
+
+public:
+    Node *pRoot = new Node;
+    Trie(){}
+
+    //Checks if a char belongs to the alphabet being used.
+    bool is_alphabetchar(char c){
+	    return (('a' <= c && c <= 'z') or ('0' <= c && c <= '9'));
+    }
+    bool is_uppercase(char c){
+        return ('A' <= c && c <= 'Z');
+    }
+
+    //Auxiliar function to find corresponding index
+    int index(char c){
+        if ('a' <= c && c <= 'z'){
+		    int index = c - 'a' + 10;
+		}
+   	    else if ('0' <= c && c <= '9'){
+		    int index = c - '0';
+	    }
+    }
+
+    //Clean the user-input considering the alphabet used in the trie and split words if necessary 
+    vector<string> clean_input(string words){
     vector<string> wordsToSearch;
     // Char to convert (numbers as represented in ascci)
     vector<int> a{65, 131, 132, 133, 134, 142, 143, 160, 181, 182, 183, 198, 199};
@@ -30,7 +58,7 @@ vector<string> clean_input(string words){
             word_clean.push_back(words[j]);
         }
         else if(is_uppercase(words[j])){
-            word_clean.push_back(words[j]);
+            word_clean.push_back(tolower(words[j]));
         }
         else if (find(a.begin(), a.end(),(int) words[j]) != a.end()){
             word_clean.push_back('a');}
@@ -57,7 +85,24 @@ vector<string> clean_input(string words){
     return wordsToSearch;
 }
 
+    //Searching for a word in the tree
+    vector<int> search(string key){
+    Node *pCurr = pRoot;
+    for(int i =0; i < key.length(); i++){
+        int ind = index(key[i]);
+        if(!pCurr -> children[ind]){
+            return (pCurr -> documents);
+        }
+        pCurr = pCurr -> children[ind];
+    }
+    return (pCurr -> documents);
+    }
+
+};
+
 //Do the search in the tree for each word returned from the clean-input function
+
+//Intersecao de ids no caso de mais de uma palavra sendo pesquisada
 //Return titles sorted
 //Return texts
 
@@ -67,6 +112,7 @@ string wordsToSearch;
 cout << "What do you want to search?" << endl;
 getline(cin, wordsToSearch); //Stores the whole sentence searched in a string variable
 vector<string> oi;
-oi = clean_input(wordsToSearch);
-is_alphabetchar('a');
+Trie Trie;
+oi = Trie.clean_input(wordsToSearch);
+
 } 
