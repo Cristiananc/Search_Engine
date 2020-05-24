@@ -75,21 +75,30 @@ public:
 	void exec_serializacao(Node * pCur, ofstream & file){
 		for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
 			if (pCur -> children[i] != nullptr){
-				file << i << " ";
-				//file << pCur -> documents << " "; // necessário iterar por cada vector
-				//cout << ... << endl;
+				file << i ;
+				for(int j = 0 ; j < (pCur->documents).size(); j++ ){// nao ta escrevendo no file
+					file << " " << (pCur -> documents)[j] << " ";
+				}
 				exec_serializacao(pCur-> children[i], file);
 			}	
 		}
-		file << "] ";
+		file << "]";
 	}
+	
+//	void disserializacao(){
+//		
+//	}
 };
 
 int main() {
 	
 	Trie Trie;
-	int docId = 2;
-	Trie.insert("ab", docId);
+	int docId1 = 8;
+	int docId2 = 9;
+	Trie.insert("abc", docId1);
+	Trie.insert("abd",docId2);
+	
+	Trie.serializacao("serialização");
 	
     return 0;
 }
