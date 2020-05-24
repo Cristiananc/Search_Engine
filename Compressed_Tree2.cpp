@@ -19,7 +19,7 @@ using namespace std;
 const int ALPHABET_SIZE = 36;
 
 struct Node{
-	vector <vector <char>> documents; // cada componente do vetor será também um vetor
+	vector <string> documents; // cada componente do vetor será também um vetor
 	Node *children[ALPHABET_SIZE]; // Alfabeto mais algarismos, 26 + 10 = 36
 
 	Node () {for(int i = 0 ; i < 36 ; i++ ){
@@ -56,7 +56,7 @@ public:
     		else{int index = c - 'a' + 'z';}
 	}
 
-	void insert(string word, vector <char> docId){ // a palavra é uma string e o id um vetor de chars
+	void insert(string word, string docId){ // a palavra é uma string e o id um vetor de chars
 		Node *p = pRoot;
 		Node *pChar;
 		for (int i = 0; i < word.length() ; i++){
@@ -87,14 +87,16 @@ public:
 	}
 
 	void le(string texto) {
-        clock_t t0; // medir o tempo de execução
-        bool f;
-        int i = 0;
-        vector <char> ids; // lista de ids
-        string word ;
-        char c ;// a letra em cada iteração
-        char c2;// a letra da iteração anterior
-        ifstream arquivo; // arquivo a ser lido
+        clock_t t0;
+        string title;       // titulo do texto atual
+        bool t;             // verifica se faz parte de um titulo
+        bool f;             // verifica se faz parte de um id
+        int i = 0;          // conta as palavras
+        string ids;         // lista de ids
+        string word ;       // a palavra de cada iteraçao
+        char c ;            // a letra em cada iteração
+        char c2;            // a letra da iteração anterior
+        ifstream arquivo;   // arquivo a ser lido
 
         arquivo.open(texto);
         if(arquivo.is_open()){
@@ -105,19 +107,25 @@ public:
                     if(c == ' ' && c2 == '\n') { f = true;
                     }
                     if (f && word[0] == 'i' && word[1] == 'd' && word[2] == '=' && isdigit(word[3]) ){
-                        ids = {};
-                        for(int i = 0; i< word.size();i++) {
-                        ids.push_back(word[i]); // registrando IDs momentaneamente
+                        ids = "";   //  apago id antigo
+                        title = ""; //apago titulo antigo
+                        t = true;
+                        for(int i = 3; i< word.size();i++) {
+                            ids = ids+word[i]; // registrando IDs
                         }
-                        //cout << word << endl;
                         word = "";
                         f = false;
                         i ++;
                     }
                     else if(word == ""){ // me livrando dos espaços e endlines
+                            if (c == '\n') {t = false;}
                     }
                     else {
-                        insert(word, ids); // chamando a função de insertar
+                        if(t && c != '\n' && word != "title") {title = title+word+" ";} //reconhecendo palavras do titulo
+                        else if(word == "") {t = false;} // reconhecendo termino do titulo
+                        if(!t){     // titulos não precisam ser inseridos
+                            insert(word, ids); // chamando a função de insertar
+                        }
                         word = ""; // reinicio como vazia a variável word
                         i ++;
                         f = false;
@@ -131,15 +139,15 @@ public:
         }
         arquivo.close();
 
-        clock_t t = ((float)clock() - t0)/CLOCKS_PER_SEC; // calculando tempo em segundos
-        cout << t << endl << i;
+        clock_t ti = ((float)clock() - t0)/CLOCKS_PER_SEC; // calculando tempo em segundos
+        cout << ti << endl << i;
     }
 
     void leitura() {
 
         string p;
         char arq[8];
-        for(int i = 1; i <3; i++){
+        for(int i = 1; i <9; i++){
             p = itoa(10000*i, arq, 10); // o numero do texto
             p = ".ipynb_checkpoints/texto_"+p+".txt"; //  o nome do arquivo, por enquanto é só uma pasta de teste
             cout <<"  " << p << endl;
