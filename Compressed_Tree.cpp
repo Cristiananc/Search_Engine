@@ -164,9 +164,9 @@ public:
 	void exec_serializacao(Node * pCur, ofstream & file){
 		for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
 			if (pCur -> children[i] != nullptr){
-				file << i ;
-				for(int j = 0 ; j < (pCur->documents).size(); j++ ){// nao ta escrevendo no file
-					file << " " << (pCur -> documents)[j] << " ";
+				file << " " << i;
+				for(std::vector<int>::iterator it = (pCur->documents).begin() ; it != (pCur->documents).end(); ++it){
+					file << "|" << *it;
 				}
 				exec_serializacao(pCur-> children[i], file);
 			}
@@ -174,6 +174,7 @@ public:
 		file << "]";
 	}
 
+<<<<<<< HEAD
 	void disserializacao(string name){
 		ifstream file;
 		string line;
@@ -204,6 +205,8 @@ public:
         }
         return 0;
     }
+=======
+>>>>>>> 1ee4cd1bf7f6095dc0311d59e9888ed553606918
 };
 
 int main() {
@@ -211,6 +214,7 @@ int main() {
 	Trie Trie;
 	int docId1 = 8;
 	int docId2 = 9;
+<<<<<<< HEAD
 	Trie.insert("abc4", docId1);
 	Trie.insert("abd",docId2);
 
@@ -219,5 +223,12 @@ int main() {
 	Trie.pesquisa();
 	//cout << (Trie.pRoot.children[10].children.[20].children[0].children[11].children[0].documents).size();
 
+=======
+	Trie.insert("banana", docId1);
+	Trie.insert("ba",docId2);
+	
+	Trie.serializacao("serializa");
+	
+>>>>>>> 1ee4cd1bf7f6095dc0311d59e9888ed553606918
     return 0;
 }
