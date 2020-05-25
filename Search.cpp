@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <fstream>
 using namespace std;
 
 const int ALPHABET_SIZE = 36;
@@ -82,6 +83,9 @@ public:
             word_clean.clear();
         }
     }
+    if(word_clean.length() > 0){
+        wordsToSearch.push_back(word_clean);
+    }
     return wordsToSearch;
 }
 
@@ -98,9 +102,59 @@ public:
     return (pCurr -> documents);
     }
 
+//Do the search in the tree for each word returned from the clean-input function
+    void searching(string word){
+        vector<string> words;
+        words = clean_input(word);
+        for(int i=0; i < words.size(); i++){
+            vector<int> ids;
+            ids = search(words[i]);
+        }
+    }
+
+    	void insert(string word, int docId){	
+		Node *p = pRoot;
+		Node *pChar;
+		for (int i = 0; i < word.length() ; i++){
+		    int ind = index(word[i]);
+    		if(p -> children[ind] == nullptr){
+    		    pChar = new Node();
+    		    p -> children[ind] = pChar;
+    		}
+    	    p = p -> children[ind];
+		}
+		//end of word
+		(p -> documents).push_back(docId);
+	}
+
+    string getTitle(vector<int> docs){
+        ifstream titlesFile;
+        string line;
+        //Exemplo
+        titlesFile.open("Texto_0.txt");
+        if(!titlesFile){
+            cerr << "Unable to open the file cointaning the page titles";
+            exit(1); //call system to stop
+        }
+        else{
+            while(getline(titlesFile, line)){
+                if(line == )
+            }
+
+        }
+        titlesFile.close();
+    }
+
+    void exec(){
+        string wordsToSearch;
+        cout << "What do you want to search?" << endl;
+        getline(cin, wordsToSearch); //Stores the whole sentence searched in a string variable
+        searching(wordsToSearch);
+
+    }
+
 };
 
-//Do the search in the tree for each word returned from the clean-input function
 
 //Intersecao de ids no caso de mais de uma palavra sendo pesquisada
 //Return titles sorted
@@ -108,11 +162,14 @@ public:
 
 
 int main() {
-string wordsToSearch;
-cout << "What do you want to search?" << endl;
-getline(cin, wordsToSearch); //Stores the whole sentence searched in a string variable
-vector<string> oi;
-Trie Trie;
-oi = Trie.clean_input(wordsToSearch);
 
+Trie Trie;
+int id1 = 1;
+int id2 = 2;
+int id3 = 3;
+Trie.insert("the", id1);
+Trie.insert("games", id2);
+Trie.insert("hunger", id3);
+
+Trie.exec(); 
 } 
