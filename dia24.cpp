@@ -218,18 +218,7 @@ int main() {
             ch = Trie.leitura("../../../Desktop/sem_repet1/"+s, c, ch);
             c = c+1;
     }
-    dir  = opendir("../../../Desktop/sem_repet2");
-    while((entry = readdir(dir)) != NULL ){
-            string s = entry->d_name;
-            ch = Trie.leitura("../../../Desktop/sem_repet2/"+s, c, ch);
-            c = c+1;
-    }
-    dir  = opendir("../../../Desktop/sem_repet3");
-    while((entry = readdir(dir)) != NULL){
-            string s = entry->d_name;
-            ch = Trie.leitura("../../../Desktop/sem_repet3/"+s, c, ch);
-            c = c+1;
-    }
+
 
     closedir(dir);
     clock_t tf = clock();
