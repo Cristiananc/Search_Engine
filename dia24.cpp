@@ -5,6 +5,7 @@
 #include <fstream> //Work with files
 #include<ctime>
 #include<algorithm>
+#include<dirent.h>
 
 using namespace std;
 
@@ -54,35 +55,33 @@ public:
     		}
     	    p = p -> children[ind];
 		}
-		//end of word
-		//(p -> documents).push_back(docId);
-		auto it = equal_range((p->documents).begin(), (p->documents).end(), docId);
-		if (it.first == it.second){(p->documents).insert(it.first, docId);}
-		//bool b = binary_search((p->documents).begin(), (p->documents).end(), docId);
-		//if(!b){auto it = lower_bound((p->documents).begin(), (p->documents).end(), docId);
-		//(p->documents).insert(it, docId);
-		//}
+            (p->documents).push_back(docId);
 	}
 
 	void pesquisa(){
+
 	    vector<int> v  = {};
 	    Node *p = pRoot;
         string palavra;
         string aux;
         int auxx = 1;
-        cout << "O que procuras (digite s para pesquisar): ";
+        cout << "O que procuras : ";
         cin >> palavra;
+        clock_t t0 = clock();
+
         for(int i = 0; i<palavra.length(); i++){
                 int ind = index(palavra[i]);
                 p = p->children[ind];
         }
-        for(int f = 0; f<(p->documents).size();f++) {
-            auto it = equal_range(v.begin(), v.end(), (p->documents)[f]);
-            if (it.first == it.second){v.insert(it.first, (p->documents)[f]);}
-        }
-        for(int j = 0; j<v.size(); j++) {
-            cout << v[j] << " " << endl;
-            if(j == v.size()-1) {cout << endl << endl <<  "encerrando pesquisa :)" << endl << endl;}
+
+        clock_t tf = clock();
+
+        cout << "tempo de busca: " << ((float)tf- (float)t0)/CLOCKS_PER_SEC << "s" << endl;
+
+        for(int j = 0; j<(p->documents).size(); j++) {
+                if (j == 0) { cout << " resultados encontrados: "<<(p->documents).size() << endl ;}
+            cout << (p->documents)[j] << " " << endl;
+            if(j == (p->documents).size()-1) {cout << endl << endl <<  "encerrando pesquisa :)" << endl << endl;}
 
             if(j == auxx*20){cout << "tecle s para a proxima pagina: "; cin >> aux; if(aux != "s")
                 {cout << endl << endl << "encerrando pesquisa :)" << endl;break;}
@@ -92,9 +91,8 @@ public:
 
 	}
 
-	void leitura(string texto) {
-        clock_t t0 = clock();
-        bool f;             // verifica se faz parte de um id
+	int leitura(string texto, int tf, int ch) {
+        bool f;            // verifica se faz parte de um id
         int i = 0;          // conta as palavras
         int id;
         string word ;       // a palavra de cada iteraçao
@@ -132,10 +130,9 @@ public:
             }
         }
         arquivo.close();
-        //cout << ((((((pRoot)->children[23])->children[28])->children[29])->children[23])->documents)[2l] << endl;
-
-        clock_t tf = ((float)(clock()-t0))/CLOCKS_PER_SEC; // calculando tempo em segundos
-        cout << "segundos: "  << tf << endl << "palavras: " << i << endl;
+        ch += i;
+        cout << "texto "  << tf << "  " << "palavras: " << ch << endl;
+        return ch;
     }
 
 
@@ -208,16 +205,36 @@ public:
 
 int main() {
 
+    clock_t t0 = clock();
+    int ch = 0;
+    int c = 0;
 	Trie Trie;
-	int docId1 = 8;
-	int docId2 = 9;
-	Trie.insert("abc4", docId1);
-	Trie.insert("abd",docId2);
 
-	Trie.serializacao("serializa��o");
-	Trie.leitura("TEXTO_00.txt");
+    DIR *  dir;
+    struct dirent *entry;
+    dir  = opendir("../../../Desktop/sem_repet1");
+    while((entry = readdir(dir)) != NULL && c<=45){
+            string s = entry->d_name;
+            ch = Trie.leitura("../../../Desktop/sem_repet1/"+s, c, ch);
+            c = c+1;
+    }
+    dir  = opendir("../../../Desktop/sem_repet2");
+    while((entry = readdir(dir)) != NULL ){
+            string s = entry->d_name;
+            ch = Trie.leitura("../../../Desktop/sem_repet2/"+s, c, ch);
+            c = c+1;
+    }
+    dir  = opendir("../../../Desktop/sem_repet3");
+    while((entry = readdir(dir)) != NULL){
+            string s = entry->d_name;
+            ch = Trie.leitura("../../../Desktop/sem_repet3/"+s, c, ch);
+            c = c+1;
+    }
+
+    closedir(dir);
+    clock_t tf = clock();
+    cout <<"tempo de processamento: " << ((float)tf - (float)(t0))/CLOCKS_PER_SEC << endl;
 	Trie.pesquisa();
-	//cout << (Trie.pRoot.children[10].children.[20].children[0].children[11].children[0].documents).size();
 
     return 0;
 }

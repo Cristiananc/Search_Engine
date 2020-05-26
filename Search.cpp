@@ -5,14 +5,16 @@
 #include <fstream> //files
 #include <sstream>
 #include <ctime>
+#include<dirent.h>
+
 using namespace std;
 
 const int ALPHABET_SIZE = 36;
 
 struct Node{
 	vector<int> documents;
-	Node *children[ALPHABET_SIZE]; // Alfabeto mais algarismos, 26 + 10 = 36 
-	
+	Node *children[ALPHABET_SIZE]; // Alfabeto mais algarismos, 26 + 10 = 36
+
 	Node () {for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
     	children[i] = nullptr;
     	}
@@ -103,7 +105,7 @@ void leitura(string texto) {
         clock_t tf = ((float)(clock()-t0))/CLOCKS_PER_SEC; // calculando tempo em segundos
         cout << "segundos: "  << tf << endl << "palavras: " << i << endl;
     }
-    //Clean the user-input considering the alphabet used in the trie and split words if necessary 
+    //Clean the user-input considering the alphabet used in the trie and split words if necessary
     vector<string> clean_input(string words){
     vector<string> wordsToSearch;
     // Char to convert (numbers as represented in ascci)
@@ -116,7 +118,7 @@ void leitura(string texto) {
     string word_clean;
 
     for (int j= 0; j < words.length(); j++){
-        //I have to check if the char is in the alphabet, if so 
+        //I have to check if the char is in the alphabet, if so
         if (is_alphabetchar(words[j])){word_clean.push_back(words[j]);
         }
         else if(is_uppercase(words[j])){word_clean.push_back(tolower(words[j]));
@@ -277,13 +279,18 @@ int main() {
 
 Trie Trie;
 
-Trie.serializacao("serializa��o");
-Trie.leitura("TEXTO_00.txt");
-Trie.pesquisa();
-//cout << (Trie.pRoot.children[10].children.[20].children[0].children[11].children[0].documents).size();
+    Trie.serializacao("serializa��o");
 
-return 0;
-} 
+    DIR *  dir;
+    struct dirent *entry;
+    dir  = opendir("out_rept");
+    while((entry = readdir(dir))){
+            string s = entry->d_name;
+            Trie.leitura("out_rept/"+s);
+    }
+    Trie.pesquisa();
+    return 0;
+}
 
 
 /*for(int i = 0; i<palavra.length(); i++){
