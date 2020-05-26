@@ -229,7 +229,7 @@ void leitura(string texto) {
                     cout << line << endl;
                     ++ indexVec;
 
-                    if(indexVec == ids.size()-1) {cout << endl << endl <<  "encerrando pesquisa para a palavra:)" << endl << endl;}
+                    if(indexVec == ids.size()) {cout << endl << endl <<  "encerrando pesquisa para a palavra :)" << endl << endl;}
 
                     if(indexVec == numberOfTitles*20){cout << "tecle s + ENTER para a proxima pagina ou outra tecla + ENTER para sair: "; cin >> aux; if(aux != "s")
                         {cout << endl << endl << "encerrando pesquisa :)" << endl;break;}
