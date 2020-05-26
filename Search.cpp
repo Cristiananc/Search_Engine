@@ -286,7 +286,9 @@ Trie Trie;
     dir  = opendir("out_rept");
     while((entry = readdir(dir))){
             string s = entry->d_name;
-            Trie.leitura("out_rept/"+s);
+            if( s!= "." && s != "..") {
+                Trie.leitura("out_rept/"+s);
+            }
     }
     Trie.pesquisa();
     return 0;
@@ -294,6 +296,7 @@ Trie Trie;
 
 
 /*for(int i = 0; i<palavra.length(); i++){
+
                 if ( i == palavra.length()-1){
                     if( b && p != pRoot) { v = (p->documents); cout << (p->documents)[0] << " aqui "; b = false;}
                     else if(palavra != "" && p != pRoot){
