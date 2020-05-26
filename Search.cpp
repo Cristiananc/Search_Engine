@@ -228,7 +228,7 @@ void leitura(string texto) {
             while(getline(titlesFile, line) && indexVec < ids.size()){
                 int a = ids[indexVec];
                 if(countLine == a){
-                    cout << line << endl;
+                    cout << "[" << indexVec + 1 << "] " << line << endl;
                     ++ indexVec;
 
                     if(indexVec == ids.size()) {cout << endl << endl <<  "encerrando pesquisa para a palavra :)" << endl << endl;}
@@ -258,6 +258,7 @@ void leitura(string texto) {
         for(int i=0; i < words.size(); i++){
             vector<int> ids;
             ids = search(words[i]);
+            cout << "Foram encontradas " << ids.size() << " resultados para sua pesquisa!" << endl;
             if (ids.size() == 0){
                 cout << "Desculpe, não encontramos sua pesquisa para a palavra " << words[i] << " :(" << endl;
             }
