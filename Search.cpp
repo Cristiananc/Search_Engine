@@ -109,6 +109,7 @@ public:
         for(int i=0; i < words.size(); i++){
             vector<int> ids;
             ids = search(words[i]);
+            getTitle(ids);
         }
     }
 
@@ -127,20 +128,26 @@ public:
 		(p -> documents).push_back(docId);
 	}
 
-    string getTitle(vector<int> docs){
+    void getTitle(vector<int> ids){
         ifstream titlesFile;
         string line;
         //Exemplo
-        titlesFile.open("Texto_0.txt");
+        titlesFile.open("titulos.txt");
+        int countLIne = 0;
+        int indexVec = 0;
         if(!titlesFile){
             cerr << "Unable to open the file cointaning the page titles";
             exit(1); //call system to stop
         }
         else{
-            while(getline(titlesFile, line)){
-                if(line == )
+            while(getline(titlesFile, line) && indexVec < ids.size()){
+                int a = ids[indexVec];
+                if(countLIne == a){
+                    cout << line << endl;
+                    ++ indexVec;
+                }
+                ++ countLIne;
             }
-
         }
         titlesFile.close();
     }
@@ -164,9 +171,9 @@ public:
 int main() {
 
 Trie Trie;
-int id1 = 1;
-int id2 = 2;
-int id3 = 3;
+int id1 = 4000;
+int id2 = 2900;
+int id3 = 3690;
 Trie.insert("the", id1);
 Trie.insert("games", id2);
 Trie.insert("hunger", id3);
