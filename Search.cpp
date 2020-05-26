@@ -147,6 +147,7 @@ void leitura(string texto) {
 
 //Searching for a word in the tree
     vector<int> search(string key){
+    clock_t t0 = clock();
     Node *pCurr = pRoot;
     for(int i =0; i < key.length(); i++){
         int ind = index(key[i]);
@@ -156,6 +157,8 @@ void leitura(string texto) {
         }
         pCurr = pCurr -> children[ind];
     }
+    double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
+    cout << "(" << tf << " segundos)" << endl;
     return (pCurr -> documents);
     }
 
@@ -254,11 +257,11 @@ void leitura(string texto) {
         cout << "O que procuras (aperte ENTER para pesquisar): " << endl;
         getline(cin, word);
         words = clean_input(word);
+        vector<int> ids;
 
         for(int i=0; i < words.size(); i++){
-            vector<int> ids;
             ids = search(words[i]);
-            cout << "Foram encontradas " << ids.size() << " resultados para sua pesquisa!" << endl;
+            cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
             if (ids.size() == 0){
                 cout << "Desculpe, não encontramos sua pesquisa para a palavra " << words[i] << " :(" << endl;
             }
@@ -267,10 +270,10 @@ void leitura(string texto) {
                 getTitle(ids);
             }
         }
-
 	}
 
 //Intersecao de ids no caso de mais de uma palavra sendo pesquisada
+//Sugestão de palavras
 //Return texts
 
 };
@@ -294,37 +297,3 @@ Trie Trie;
     Trie.pesquisa();
     return 0;
 }
-
-
-/*for(int i = 0; i<palavra.length(); i++){
-
-                if ( i == palavra.length()-1){
-                    if( b && p != pRoot) { v = (p->documents); cout << (p->documents)[0] << " aqui "; b = false;}
-                    else if(palavra != "" && p != pRoot){
-                        int t1 = v[0];
-                        int t2 = (p->documents)[0];
-                        const int t3 = v[v.size()-1];
-                        const int t4 = (p->documents)[(p->documents).size()-1];
-                        while(t1 <= t3 && t2 <= t4) {
-                            if((p->documents)[c] != v[c] && (p->documents)[c] > v[c]){
-                                v.erase(v.begin()+c);
-                                if(t1 == t3){t1 = t1+100;}
-                                else {t1 = v[c];}
-                            }
-                            else if((p->documents)[c] != v[c] && (p->documents)[c] < v[c]){
-                                (p->documents).erase((p->documents).begin()+c);
-                                if(t2 == t4){t2 = t2+100;}
-                                else {t2 = (p->documents)[c];}
-                            }
-                            else if((p)->documents[c] == v[c]) { c = c+1;}
-                        }
-                        if ((p->documents).size() == 0) {v = {};}
-                    }
-                    p = pRoot;
-                }
-            else{
-                c = 0;
-                int ind = index(palavra[i]);
-                p = p->children[ind];
-            }
-        }*/
