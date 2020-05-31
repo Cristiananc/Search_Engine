@@ -118,21 +118,22 @@ void leitura(string texto) {
     string word_clean;
 
     for (int j= 0; j < words.length(); j++){
+        int letter = (int) words[j];
         //I have to check if the char is in the alphabet, if so
         if (is_alphabetchar(words[j])){word_clean.push_back(words[j]);
         }
         else if(is_uppercase(words[j])){word_clean.push_back(tolower(words[j]));
         }
-        else if (find(a.begin(), a.end(),(int) words[j]) != a.end()){word_clean.push_back('a');}
-        else if (find(e.begin(), e.end(),(int) words[j]) != e.end()){word_clean.push_back('e');
+        else if (find(a.begin(), a.end(), letter) != a.end()){word_clean.push_back('a');}
+        else if (find(e.begin(), e.end(), letter) != e.end()){word_clean.push_back('e');
         }
-        else if (find(i.begin(), i.end(),(int) words[j]) != i.end()){word_clean.push_back('i');
+        else if (find(i.begin(), i.end(), letter) != i.end()){word_clean.push_back('i');
         }
-        else if(find(o.begin(), o.end(),(int) words[j]) != o.end()){word_clean.push_back('o');
+        else if(find(o.begin(), o.end(), letter) != o.end()){word_clean.push_back('o');
         }
-        else if(find(u.begin(), u.end(),(int) words[j]) != u.end()){word_clean.push_back('u');
+        else if(find(u.begin(), u.end(), letter) != u.end()){word_clean.push_back('u');
         }
-        else if(find(c.begin(), c.end(),(int) words[j]) != c.end()){word_clean.push_back('c');
+        else if(find(c.begin(), c.end(), letter) != c.end()){word_clean.push_back('c');
         }
         else if(words[j] == ' '){
             wordsToSearch.push_back(word_clean);
@@ -284,6 +285,7 @@ int main() {
 Trie Trie;
 
     Trie.serializacao("serializa��o");
+    cout << (int) 'í' << endl;
 
     DIR *  dir;
     struct dirent *entry;
