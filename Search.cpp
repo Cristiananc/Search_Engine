@@ -6,6 +6,7 @@
 #include <sstream>
 #include <ctime>
 #include<dirent.h>
+#include<locale.h>
 
 using namespace std;
 
@@ -100,7 +101,6 @@ void leitura(string texto) {
             }
         }
         arquivo.close();
-        //cout << ((((((pRoot)->children[23])->children[28])->children[29])->children[23])->documents)[2l] << endl;
 
         clock_t tf = ((float)(clock()-t0))/CLOCKS_PER_SEC; // calculando tempo em segundos
         cout << "segundos: "  << tf << endl << "palavras: " << i << endl;
@@ -292,6 +292,7 @@ Trie Trie;
             string s = entry->d_name;
             if( s!= "." && s != "..") {
                 Trie.leitura("out_rept/"+s);
+
             }
     }
     Trie.pesquisa();
