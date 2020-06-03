@@ -236,6 +236,7 @@ int main() {
 
 	
 	Trie.serializa("serializa");
+	Trie.diserializa("serializa");
 	
 
     return 0;
