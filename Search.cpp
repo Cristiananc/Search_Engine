@@ -6,7 +6,6 @@
 #include <sstream>
 #include <ctime>
 #include<dirent.h>
-#include<locale.h>
 
 using namespace std;
 
@@ -101,6 +100,7 @@ void leitura(string texto) {
             }
         }
         arquivo.close();
+        //cout << ((((((pRoot)->children[23])->children[28])->children[29])->children[23])->documents)[2l] << endl;
 
         clock_t tf = ((float)(clock()-t0))/CLOCKS_PER_SEC; // calculando tempo em segundos
         cout << "segundos: "  << tf << endl << "palavras: " << i << endl;
@@ -118,21 +118,22 @@ void leitura(string texto) {
     string word_clean;
 
     for (int j= 0; j < words.length(); j++){
+        int letter = (int) words[j];
         //I have to check if the char is in the alphabet, if so
         if (is_alphabetchar(words[j])){word_clean.push_back(words[j]);
         }
         else if(is_uppercase(words[j])){word_clean.push_back(tolower(words[j]));
         }
-        else if (find(a.begin(), a.end(),(int) words[j]) != a.end()){word_clean.push_back('a');}
-        else if (find(e.begin(), e.end(),(int) words[j]) != e.end()){word_clean.push_back('e');
+        else if (find(a.begin(), a.end(), letter) != a.end()){word_clean.push_back('a');}
+        else if (find(e.begin(), e.end(), letter) != e.end()){word_clean.push_back('e');
         }
-        else if (find(i.begin(), i.end(),(int) words[j]) != i.end()){word_clean.push_back('i');
+        else if (find(i.begin(), i.end(), letter) != i.end()){word_clean.push_back('i');
         }
-        else if(find(o.begin(), o.end(),(int) words[j]) != o.end()){word_clean.push_back('o');
+        else if(find(o.begin(), o.end(), letter) != o.end()){word_clean.push_back('o');
         }
-        else if(find(u.begin(), u.end(),(int) words[j]) != u.end()){word_clean.push_back('u');
+        else if(find(u.begin(), u.end(), letter) != u.end()){word_clean.push_back('u');
         }
-        else if(find(c.begin(), c.end(),(int) words[j]) != c.end()){word_clean.push_back('c');
+        else if(find(c.begin(), c.end(), letter) != c.end()){word_clean.push_back('c');
         }
         else if(words[j] == ' '){
             wordsToSearch.push_back(word_clean);
@@ -147,18 +148,14 @@ void leitura(string texto) {
 
 //Searching for a word in the tree
     vector<int> search(string key){
-    clock_t t0 = clock();
     Node *pCurr = pRoot;
     for(int i =0; i < key.length(); i++){
         int ind = index(key[i]);
         if(!pCurr -> children[ind]){
-            vector<int> vec;
-            return vec;
+            return (pCurr -> documents);
         }
         pCurr = pCurr -> children[ind];
     }
-    double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
-    cout << "(" << tf << " segundos)" << endl;
     return (pCurr -> documents);
     }
 
@@ -237,7 +234,7 @@ void leitura(string texto) {
                     if(indexVec == ids.size()) {cout << endl << endl <<  "encerrando pesquisa para a palavra :)" << endl << endl;}
 
                     if(indexVec == numberOfTitles*20){cout << "tecle s + ENTER para a proxima pagina ou outra tecla + ENTER para sair: "; cin >> aux; if(aux != "s")
-                        {cout << endl << endl << "encerrando pesquisa :)" << endl;break;}
+                        {cout << endl << endl << "encerrando pesquisa :)" << endl; break;}
                     else{numberOfTitles += 1;}
                     }
                 }
@@ -249,30 +246,62 @@ void leitura(string texto) {
 
 //Do the search in the tree for each word returned from the clean-input function
     	void pesquisa(){
-	    vector<int> v  = {};
 	    Node *p = pRoot;
         string word;
         vector<string> words;
         int auxx = 1;
+
+        while(true){
         cout << "O que procuras (aperte ENTER para pesquisar): " << endl;
         getline(cin, word);
         words = clean_input(word);
         vector<int> ids;
+        vector<int> ids2;
 
-        for(int i=0; i < words.size(); i++){
-            ids = search(words[i]);
+        clock_t t0 = clock();
+
+        ids = search(words[0]);
+        for(int i = 1; i < words.size(); i++){
+                ids2 = search(words[i]);
+                ids = intersection(ids, ids2);
+            }
+
+        double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
+        cout << "(" << tf << " segundos)" << endl;
+
             cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
             if (ids.size() == 0){
-                cout << "Desculpe, não encontramos sua pesquisa para a palavra " << words[i] << " :(" << endl;
+                cout << "Desculpe, não encontramos sua pesquisa para " << word << " :(" << endl;
             }
             else{
-                cout << "Pagínas encontradas para a palavra: " << words[i] << endl;
+                cout << "Pagínas encontradas para: " << word << endl;
                 getTitle(ids);
             }
+
+            cin.ignore();
         }
 	}
 
 //Intersecao de ids no caso de mais de uma palavra sendo pesquisada
+vector<int> intersection(vector<int> ids1, vector<int> ids2){
+    vector<int> idsIntersec = {};
+    int i = 0;
+    int j = 0;
+    while(i < ids1.size() && j < ids2.size()){
+    if(ids1[i] == ids2[j]){
+        idsIntersec.push_back(ids1[i]);
+        i ++;
+        j ++;
+    }
+    else if(ids1[i] < ids2[j]){
+        i ++;
+    }
+    else{
+        j ++;
+    }
+}
+return idsIntersec;
+}
 //Sugestão de palavras
 //Return texts
 
@@ -285,14 +314,13 @@ Trie Trie;
 
     Trie.serializacao("serializa��o");
 
-    DIR *  dir;
-    struct dirent *entry;
+    DIR* dir;
+    struct dirent* entry;
     dir  = opendir("out_rept");
     while((entry = readdir(dir))){
             string s = entry->d_name;
             if( s!= "." && s != "..") {
                 Trie.leitura("out_rept/"+s);
-
             }
     }
     Trie.pesquisa();
