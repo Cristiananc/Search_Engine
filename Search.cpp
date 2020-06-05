@@ -5,7 +5,7 @@
 #include <fstream> //files
 #include <sstream>
 #include <ctime>
-#include<dirent.h>
+#include <dirent.h>
 
 using namespace std;
 
@@ -149,10 +149,11 @@ void leitura(string texto) {
 //Searching for a word in the tree
     vector<int> search(string key){
     Node *pCurr = pRoot;
+    vector<int> vec = {};
     for(int i =0; i < key.length(); i++){
         int ind = index(key[i]);
         if(!pCurr -> children[ind]){
-            return (pCurr -> documents);
+            return vec;
         }
         pCurr = pCurr -> children[ind];
     }
@@ -272,6 +273,14 @@ void leitura(string texto) {
             cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
             if (ids.size() == 0){
                 cout << "Desculpe, não encontramos sua pesquisa para " << word << " :(" << endl;
+                int nSugges = 1;
+                for(int i = 0; i < words.size(); i++){
+                    vector<string> suggestions;
+                    suggestion(words[i], suggestions, nSugges);
+                    for (vector<string>::const_iterator i = suggestions.begin(); i != suggestions.end(); ++i){
+                        cout << "Você quis dizer " << *i << "?" << endl;
+                    }
+                }                
             }
             else{
                 cout << "Pagínas encontradas para: " << word << endl;
@@ -302,11 +311,64 @@ vector<int> intersection(vector<int> ids1, vector<int> ids2){
 }
 return idsIntersec;
 }
-//Sugestão de palavras
+//Ainda falta definir como fazer pra palavras com números, pro cada de não encontrar nenhuma sugestão, como retornar sugestões pra mais de uma palavra
+//Pesquisar a nova sugestão que a pessoa escolher
+//Vamos usar probabilidade??
+
+//Suggestion of words
+//Its given a word that wasn't find in the trie and returns a suggestion
+ void edits1(string word, vector<string> &results){
+    //Deletion
+    for(int i = 0; i < word.size(); i++){
+        results.push_back(word.substr(0,i) + word.substr(i + 1));
+        }
+    //Transposes
+    for (int i = 0; i < word.size() - 1; i++){ 
+        results.push_back(word.substr(0, i) + word[i + 1] + word[i] + word.substr(i + 2));
+    }
+    for (char j = 'a'; j <= 'z'; ++ j){    
+    //Replaces
+        for(int i = 0; i < word.size(); i++){
+            results.push_back(word.substr(0, i) + j + word.substr(i + 1));
+        }
+    //Inserts
+        for(int i = 0; i < word.size() + 1; i++){
+            results.push_back(word.substr(0, i) + j + word.substr(i));
+        }
+    }
+}
+
+void edits2(string word, vector<string> &results2){
+    vector<string> results = {};
+    edits1(word, results);
+    for(int i = 0; i < results.size(); i++){
+        vector<string> results1 = {};
+        edits1(results[i], results1);
+        results2.insert(results2.end(), results1.begin(), results1.end());
+    }
+}
+
+void suggestion(string word, vector<string> &suggestion, int nSuggestion){
+    vector<string> results;
+    int count = 0;
+    edits1(word, results);
+    for(int i =0; i < results.size(); i++){
+        if(!search(results[i]).empty()){
+            suggestion.push_back(results[i]);
+            count++;
+        }
+        if(count == nSuggestion){
+            break;
+        }
+    }
+}
+
+bool isdigit (char c){
+    return('0' <= c && c <= '9');
+}
 //Return texts
 
 };
-
 
 int main() {
 
