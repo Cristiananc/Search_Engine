@@ -229,6 +229,9 @@ int main() {
 	Trie.serializa("serializa");
 	Trie.diserializa("serializa");
 	
+
+
+	
 	Trie.search("abc");
 
     return 0;

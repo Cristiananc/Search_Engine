@@ -160,56 +160,71 @@ void leitura(string texto) {
     return (pCurr -> documents);
     }
 
-    	void serializacao(string name){
+	
+	void serializa(string name){
 		ofstream file;
 		file.open(name);
 		Node * pNode = pRoot;
-		exec_serializacao(pNode, file);
-	}
+		exec_serializa(pNode, file);
+		}
 
-	void exec_serializacao(Node * pCur, ofstream & file){
+	void exec_serializa(Node * pCur, ofstream & file){
+		if ( !(pCur->documents).empty() ){
+					file << "{";
+					for(std::vector<int>::iterator it = pCur->documents.begin() ; it != pCur->documents.end(); ++it){
+						file << *it << " ";
+					}
+					file << "}";
+				}
 		for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
 			if (pCur -> children[i] != nullptr){
-				file << i ;
-				for(int j = 0 ; j < (pCur->documents).size(); j++ ){// nao ta escrevendo no file
-					file << " " << (pCur -> documents)[j] << " ";
-				}
-				exec_serializacao(pCur-> children[i], file);
+				file << i << " ";
+				exec_serializa(pCur-> children[i], file);
 			}
 		}
 		file << "]";
 	}
-
-	void disserializacao(string name){
-		ifstream file;
-		string line;
-        file.open(name);
-        getline(file, line);
-        Node ** pNode = &pRoot;
-        stringstream split;
-        split << line;
-        exec_pRoot_disserializacao(pNode, split);
-	}
-
-	void exec_pRoot_disserializacao(Node ** pNode, stringstream & split){
-        string cur_word;
-        while(split >> cur_word){
-            if(exec_disserializacao(pNode, cur_word, split)) break;
-        }
+	
+	void diserializa(string name){
+        ifstream file; //file do tipo input
+        string line; //string para pegar a primeira linha da file
+        file.open(name); 
+        getline(file, line); //peguei a primeira linha
+        Node ** pNode = &pRoot; //ponteiro duplo pois é a mesma ideia do insert da linkedlist
+        stringstream split; //stringstream para receber a linha da file 
+        split << line; //passei line para o split
+        string cur_name;
+        while(split >> cur_name){
+	       	if(exec_diserializa(pNode, cur_name, split)) break;
+		}
     }
 
-    bool exec_disserializacao(Node ** pNode, string cur_word, stringstream  & split){
-        if(cur_word == "]") return 1;
-
-        //Node * pNew = new Node(cur_word);
-        //(*pNode)->children[cur_word] = pNew;
-        //pNode = &(*pNode)->children[cur_word];
-
-        while(split >> cur_word){
-            if(exec_disserializacao(pNode, cur_word, split)) break;
+    bool exec_diserializa(Node ** pNode, string cur, stringstream  & split){
+        if(cur == "]") return 1; //se for um parenteses, eu devo subir, então retorno verdadeiro
+        
+        //se nao for um "[" , eu crio um novo node com cur
+        
+    	Node *p;
+        
+        (*pNode)->children[stoi(cur)] = p; //digo que é filho do pNode da atual recursão
+        pNode = &(*pNode)->children[stoi(cur)]; //caminho para esse filho
+        
+        string isvector;string id;
+        split >> isvector; //recebe o pr�ximo valor que vai ser "{" ou " "
+        
+        if(isvector == "{"){ //se for "{"
+        	split >> id; //recebo os ids
+        	
+        	//(*pNode)->documents.pushback( stoi(id) ); //e salvo
+		}
+ 
+        while(split >> cur){ //continuo recebendo strings da split
+           //vou descendo, até retorna um verdadeiro
+            if(exec_diserializa(pNode, cur, split)) break;
         }
         return 0;
     }
+
 
 //Return titles sorted
     void getTitle(vector<int> ids){
@@ -374,7 +389,7 @@ int main() {
 
 Trie Trie;
 
-    Trie.serializacao("serializa��o");
+    Trie.serializa("serializada");
 
     DIR* dir;
     struct dirent* entry;
