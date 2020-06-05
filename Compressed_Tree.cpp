@@ -190,24 +190,15 @@ public:
     bool exec_diserializa(Node ** pNode, string cur, stringstream  & split){
         if(cur == "]") return 1; //se for um parenteses, eu devo subir, então retorno verdadeiro
         
-    	Node *p = pRoot;
-    	Node *pChar;
-    	if(p -> children[stoi(cur)] == nullptr){
-    	    pChar = new Node();
-    	    p -> children[stoi(cur)] = pChar;
-    	}
-    	p = p -> children[stoi(cur)];
-
+        //se nao for um "[" , eu crio um novo node com cur
         
-        //Node * pNew = new Node(cur_name); //se não for um parenteses, eu crio um novo nó com essa string
+    	Node *p;
         
         (*pNode)->children[stoi(cur)] = p; //digo que é filho do pNode da atual recursão
         pNode = &(*pNode)->children[stoi(cur)]; //caminho para esse filho
         
         string isvector;string id;
         split >> isvector; //recebe o pr�ximo valor que vai ser "{" ou " "
-        
-        //(*pNode)->end = stoi(end);
         
         if(isvector == "{"){ //se for "{"
         	split >> id; //recebo os ids
@@ -216,7 +207,7 @@ public:
 		}
  
         while(split >> cur){ //continuo recebendo strings da split
-            //vou descendo, até retorna um verdadeiro
+           //vou descendo, até retorna um verdadeiro
             if(exec_diserializa(pNode, cur, split)) break;
         }
         return 0;
@@ -238,6 +229,7 @@ int main() {
 	Trie.serializa("serializa");
 	Trie.diserializa("serializa");
 	
+	Trie.search("abc");
 
     return 0;
 }
