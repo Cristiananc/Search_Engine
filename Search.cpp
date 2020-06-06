@@ -6,6 +6,7 @@
 #include <sstream>
 #include <ctime>
 #include <dirent.h>
+#include <set>
 
 using namespace std;
 
@@ -20,7 +21,6 @@ struct Node{
     	}
 	}
 };
-
 
 class Trie{
 
@@ -210,7 +210,7 @@ void leitura(string texto) {
         pNode = &(*pNode)->children[stoi(cur)]; //caminho para esse filho
         
         string isvector;string id;
-        split >> isvector; //recebe o pr�ximo valor que vai ser "{" ou " "
+        split >> isvector; //recebe o pr�ximo valor que vai ser "{" ou " "
         
         if(isvector == "{"){ //se for "{"
         	split >> id; //recebo os ids
@@ -237,7 +237,7 @@ void leitura(string texto) {
         string aux;
         int numberOfTitles = 1;
         if(!titlesFile){
-            cerr << "Unable to open the file cointaning the page titles";
+            cerr << "Não foi possível abrir o arquivo contendo a página de títulos";
             exit(1); //call system to stop
         }
         else{
@@ -260,8 +260,18 @@ void leitura(string texto) {
         }
     }
 
+    void search_words(vector<string> words, vector<int> &ids){
+        vector<int> ids2;
+
+        ids = search(words[0]);
+        for(int i = 1; i < words.size(); i++){
+                ids2 = search(words[i]);
+                ids = intersection(ids, ids2);
+            }
+    }
+
 //Do the search in the tree for each word returned from the clean-input function
-    	void pesquisa(){
+    	void executeSearch(){
 	    Node *p = pRoot;
         string word;
         vector<string> words;
@@ -271,40 +281,51 @@ void leitura(string texto) {
         cout << "O que procuras (aperte ENTER para pesquisar): " << endl;
         getline(cin, word);
         words = clean_input(word);
+
+        if(words.size() > 0){
         vector<int> ids;
-        vector<int> ids2;
-
         clock_t t0 = clock();
-
-        ids = search(words[0]);
-        for(int i = 1; i < words.size(); i++){
-                ids2 = search(words[i]);
-                ids = intersection(ids, ids2);
-            }
+        search_words(words, ids);
 
         double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
         cout << "(" << tf << " segundos)" << endl;
-
-            cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
-            if (ids.size() == 0){
-                cout << "Desculpe, não encontramos sua pesquisa para " << word << " :(" << endl;
-                int nSugges = 1;
-                for(int i = 0; i < words.size(); i++){
-                    vector<string> suggestions;
-                    suggestion(words[i], suggestions, nSugges);
-                    for (vector<string>::const_iterator i = suggestions.begin(); i != suggestions.end(); ++i){
-                        cout << "Você quis dizer " << *i << "?" << endl;
+        cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
+        
+        if (ids.size() == 0){
+            cout << "Desculpe, não encontramos sua pesquisa para " << word << " :(" << endl;
+            set<string> suggestions = {};
+            int nSugges = 5;
+            if(words.size() == 1){
+                suggestion(words[0], suggestions, nSugges);
+                if(suggestions.size() > 0){
+                    cout << "Você quis dizer: " << endl;
+                    int count = 1;
+                    for (set<string>::iterator it = suggestions.begin(); it != suggestions.end(); ++it) {
+                    cout << "[" << count << "]" << *it << endl;
+                    count++;                    
                     }
-                }                
+                    char aux;
+                    cout << "tecle o número da sugestão + ENTER para pesquisá-la: "; cin >> aux; 
+                    int ia = aux - '0' - 1;
+                    if(0 <= ia < suggestions.size()){
+                    string x = *next(suggestions.begin(), ia);
+                    vector<string> wordSug = {x};
+                    search_words(wordSug, ids);
+                    cout << "Pagínas encontradas para: " << x << endl;
+                    getTitle(ids);
+                    }
+                }
             }
-            else{
-                cout << "Pagínas encontradas para: " << word << endl;
-                getTitle(ids);
-            }
-
-            cin.ignore();
         }
-	}
+        else{
+            cout << "Pagínas encontradas para: " << word << endl;
+            getTitle(ids);
+        }
+    }
+
+    cin.ignore();
+    }
+}
 
 //Intersecao de ids no caso de mais de uma palavra sendo pesquisada
 vector<int> intersection(vector<int> ids1, vector<int> ids2){
@@ -317,18 +338,11 @@ vector<int> intersection(vector<int> ids1, vector<int> ids2){
         i ++;
         j ++;
     }
-    else if(ids1[i] < ids2[j]){
-        i ++;
-    }
-    else{
-        j ++;
-    }
+    else if(ids1[i] < ids2[j]){i ++;}
+    else{j ++;}
 }
 return idsIntersec;
 }
-//Ainda falta definir como fazer pra palavras com números, pro cada de não encontrar nenhuma sugestão, como retornar sugestões pra mais de uma palavra
-//Pesquisar a nova sugestão que a pessoa escolher
-//Vamos usar probabilidade??
 
 //Suggestion of words
 //Its given a word that wasn't find in the trie and returns a suggestion
@@ -356,6 +370,7 @@ return idsIntersec;
 void edits2(string word, vector<string> &results2){
     vector<string> results = {};
     edits1(word, results);
+    results2.insert(results2.end(), results.begin(), results.end());
     for(int i = 0; i < results.size(); i++){
         vector<string> results1 = {};
         edits1(results[i], results1);
@@ -363,18 +378,14 @@ void edits2(string word, vector<string> &results2){
     }
 }
 
-void suggestion(string word, vector<string> &suggestion, int nSuggestion){
+void suggestion(string word, set<string> &sugges, int numSuge){
     vector<string> results;
-    int count = 0;
-    edits1(word, results);
+    edits2(word, results);
     for(int i =0; i < results.size(); i++){
         if(!search(results[i]).empty()){
-            suggestion.push_back(results[i]);
-            count++;
+            sugges.emplace(results[i]);
         }
-        if(count == nSuggestion){
-            break;
-        }
+        if (sugges.size() == numSuge){break;}
     }
 }
 
@@ -400,7 +411,7 @@ Trie Trie;
                 Trie.leitura("out_rept/"+s);
             }
     }
-    Trie.pesquisa();
+    Trie.executeSearch();
     return 0;
 }
 
