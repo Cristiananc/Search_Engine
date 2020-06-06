@@ -54,10 +54,10 @@ public:
     		}
     	    p = p -> children[ind];
 		}
-		
+
 		auto it = equal_range((p->documents).begin(), (p->documents).end(), docId);
 		if (it.first == it.second){(p->documents).insert(it.first, docId);}
-		
+
 	}
 
 	void pesquisa(){
@@ -122,7 +122,7 @@ public:
                     }
                 }
                 else {
-                    word = word+c; // acrescento à palavra o char atual
+                    word = word+c; // acrescento �  palavra o char atual
                 }
                 c2 = c;
             }
@@ -172,24 +172,24 @@ public:
 		}
 		file << "]";
 	}
-	
+
 	void diserializa(string name){
         ifstream file; //file do tipo input
         string line; //string para pegar a primeira linha da file
-        file.open(name); 
+        file.open(name);
         getline(file, line); //peguei a primeira linha
         Node ** pNode = &pRoot; //ponteiro duplo pois é a mesma ideia do insert da linkedlist
-        stringstream split; //stringstream para receber a linha da file 
+        stringstream split; //stringstream para receber a linha da file
         split << line; //passei line para o split
         string cur_name;
         while(split >> cur_name){
 	       	if(exec_diserializa(pNode, cur_name, split)) break;
 		}
     }
-    
+
     bool exec_diserializa(Node ** pNode, string cur, stringstream  & split){
         if(cur == "]") return 1; //se for um parenteses, eu devo subir, então retorno verdadeiro
-        
+
     	Node *p = pRoot;
     	Node *pChar;
     	if(p -> children[stoi(cur)] == nullptr){
@@ -198,23 +198,23 @@ public:
     	}
     	p = p -> children[stoi(cur)];
 
-        
+
         //Node * pNew = new Node(cur_name); //se não for um parenteses, eu crio um novo nó com essa string
-        
+
         (*pNode)->children[stoi(cur)] = p; //digo que é filho do pNode da atual recursão
         pNode = &(*pNode)->children[stoi(cur)]; //caminho para esse filho
-        
+
         string isvector;string id;
         split >> isvector; //recebe o pr�ximo valor que vai ser "{" ou " "
-        
+
         //(*pNode)->end = stoi(end);
-        
+
         if(isvector == "{"){ //se for "{"
         	split >> id; //recebo os ids
-        	
+
         	//(*pNode)->documents.pushback( stoi(id) ); //e salvo
 		}
- 
+
         while(split >> cur){ //continuo recebendo strings da split
             //vou descendo, até retorna um verdadeiro
             if(exec_diserializa(pNode, cur, split)) break;
@@ -234,10 +234,10 @@ int main() {
 	Trie.insert("abc",docId2);
 	Trie.insert("abc",docId1);
 
-	
+
 	Trie.serializa("serializa");
 	Trie.diserializa("serializa");
-	
+
 
     return 0;
 }

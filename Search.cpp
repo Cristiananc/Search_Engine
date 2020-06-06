@@ -265,11 +265,7 @@ void leitura(string texto) {
                 ids2 = search(words[i]);
                 ids = intersection(ids, ids2);
             }
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> 053bcf3644a5f17d914001ac2eaeed8cc87ed4ab
         double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
         cout << "(" << tf << " segundos)" << endl;
 
@@ -330,3 +326,4 @@ Trie Trie;
     Trie.pesquisa();
     return 0;
 }
+
