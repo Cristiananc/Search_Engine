@@ -5,7 +5,7 @@
 #include <fstream> //files
 #include <sstream>
 #include <ctime>
-#include<dirent.h>
+#include <dirent.h>
 
 using namespace std;
 
@@ -149,66 +149,82 @@ void leitura(string texto) {
 //Searching for a word in the tree
     vector<int> search(string key){
     Node *pCurr = pRoot;
+    vector<int> vec = {};
     for(int i =0; i < key.length(); i++){
         int ind = index(key[i]);
         if(!pCurr -> children[ind]){
-            return (pCurr -> documents);
+            return vec;
         }
         pCurr = pCurr -> children[ind];
     }
     return (pCurr -> documents);
     }
 
-    	void serializacao(string name){
+	
+	void serializa(string name){
 		ofstream file;
 		file.open(name);
 		Node * pNode = pRoot;
-		exec_serializacao(pNode, file);
-	}
+		exec_serializa(pNode, file);
+		}
 
-	void exec_serializacao(Node * pCur, ofstream & file){
+	void exec_serializa(Node * pCur, ofstream & file){
+		if ( !(pCur->documents).empty() ){
+					file << "{";
+					for(std::vector<int>::iterator it = pCur->documents.begin() ; it != pCur->documents.end(); ++it){
+						file << *it << " ";
+					}
+					file << "}";
+				}
 		for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
 			if (pCur -> children[i] != nullptr){
-				file << i ;
-				for(int j = 0 ; j < (pCur->documents).size(); j++ ){// nao ta escrevendo no file
-					file << " " << (pCur -> documents)[j] << " ";
-				}
-				exec_serializacao(pCur-> children[i], file);
+				file << i << " ";
+				exec_serializa(pCur-> children[i], file);
 			}
 		}
 		file << "]";
 	}
-
-	void disserializacao(string name){
-		ifstream file;
-		string line;
-        file.open(name);
-        getline(file, line);
-        Node ** pNode = &pRoot;
-        stringstream split;
-        split << line;
-        exec_pRoot_disserializacao(pNode, split);
-	}
-
-	void exec_pRoot_disserializacao(Node ** pNode, stringstream & split){
-        string cur_word;
-        while(split >> cur_word){
-            if(exec_disserializacao(pNode, cur_word, split)) break;
-        }
+	
+	void diserializa(string name){
+        ifstream file; //file do tipo input
+        string line; //string para pegar a primeira linha da file
+        file.open(name); 
+        getline(file, line); //peguei a primeira linha
+        Node ** pNode = &pRoot; //ponteiro duplo pois é a mesma ideia do insert da linkedlist
+        stringstream split; //stringstream para receber a linha da file 
+        split << line; //passei line para o split
+        string cur_name;
+        while(split >> cur_name){
+	       	if(exec_diserializa(pNode, cur_name, split)) break;
+		}
     }
 
-    bool exec_disserializacao(Node ** pNode, string cur_word, stringstream  & split){
-        if(cur_word == "]") return 1;
-
-        //Node * pNew = new Node(cur_word);
-        //(*pNode)->children[cur_word] = pNew;
-        //pNode = &(*pNode)->children[cur_word];
-
-        while(split >> cur_word){
-            if(exec_disserializacao(pNode, cur_word, split)) break;
+    bool exec_diserializa(Node ** pNode, string cur, stringstream  & split){
+        if(cur == "]") return 1; //se for um parenteses, eu devo subir, então retorno verdadeiro
+        
+        //se nao for um "[" , eu crio um novo node com cur
+        
+    	Node *p;
+        
+        (*pNode)->children[stoi(cur)] = p; //digo que é filho do pNode da atual recursão
+        pNode = &(*pNode)->children[stoi(cur)]; //caminho para esse filho
+        
+        string isvector;string id;
+        split >> isvector; //recebe o pr�ximo valor que vai ser "{" ou " "
+        
+        if(isvector == "{"){ //se for "{"
+        	split >> id; //recebo os ids
+        	
+        	//(*pNode)->documents.pushback( stoi(id) ); //e salvo
+		}
+ 
+        while(split >> cur){ //continuo recebendo strings da split
+           //vou descendo, até retorna um verdadeiro
+            if(exec_diserializa(pNode, cur, split)) break;
         }
         return 0;
     }
+
 
 //Return titles sorted
     void getTitle(vector<int> ids){
@@ -272,6 +288,14 @@ void leitura(string texto) {
             cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
             if (ids.size() == 0){
                 cout << "Desculpe, não encontramos sua pesquisa para " << word << " :(" << endl;
+                int nSugges = 1;
+                for(int i = 0; i < words.size(); i++){
+                    vector<string> suggestions;
+                    suggestion(words[i], suggestions, nSugges);
+                    for (vector<string>::const_iterator i = suggestions.begin(); i != suggestions.end(); ++i){
+                        cout << "Você quis dizer " << *i << "?" << endl;
+                    }
+                }                
             }
             else{
                 cout << "Pagínas encontradas para: " << word << endl;
@@ -302,17 +326,70 @@ vector<int> intersection(vector<int> ids1, vector<int> ids2){
 }
 return idsIntersec;
 }
-//Sugestão de palavras
+//Ainda falta definir como fazer pra palavras com números, pro cada de não encontrar nenhuma sugestão, como retornar sugestões pra mais de uma palavra
+//Pesquisar a nova sugestão que a pessoa escolher
+//Vamos usar probabilidade??
+
+//Suggestion of words
+//Its given a word that wasn't find in the trie and returns a suggestion
+ void edits1(string word, vector<string> &results){
+    //Deletion
+    for(int i = 0; i < word.size(); i++){
+        results.push_back(word.substr(0,i) + word.substr(i + 1));
+        }
+    //Transposes
+    for (int i = 0; i < word.size() - 1; i++){ 
+        results.push_back(word.substr(0, i) + word[i + 1] + word[i] + word.substr(i + 2));
+    }
+    for (char j = 'a'; j <= 'z'; ++ j){    
+    //Replaces
+        for(int i = 0; i < word.size(); i++){
+            results.push_back(word.substr(0, i) + j + word.substr(i + 1));
+        }
+    //Inserts
+        for(int i = 0; i < word.size() + 1; i++){
+            results.push_back(word.substr(0, i) + j + word.substr(i));
+        }
+    }
+}
+
+void edits2(string word, vector<string> &results2){
+    vector<string> results = {};
+    edits1(word, results);
+    for(int i = 0; i < results.size(); i++){
+        vector<string> results1 = {};
+        edits1(results[i], results1);
+        results2.insert(results2.end(), results1.begin(), results1.end());
+    }
+}
+
+void suggestion(string word, vector<string> &suggestion, int nSuggestion){
+    vector<string> results;
+    int count = 0;
+    edits1(word, results);
+    for(int i =0; i < results.size(); i++){
+        if(!search(results[i]).empty()){
+            suggestion.push_back(results[i]);
+            count++;
+        }
+        if(count == nSuggestion){
+            break;
+        }
+    }
+}
+
+bool isdigit (char c){
+    return('0' <= c && c <= '9');
+}
 //Return texts
 
 };
-
 
 int main() {
 
 Trie Trie;
 
-    Trie.serializacao("serializa��o");
+    Trie.serializa("serializada");
 
     DIR* dir;
     struct dirent* entry;
