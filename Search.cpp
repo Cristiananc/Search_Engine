@@ -222,13 +222,13 @@ void leitura(string texto) {
 	}
 
 	void diserializa(string name){
-        ifstream file; //file do tipo input
-        string line; //string para pegar a primeira linha da file
+        ifstream file; 
+        string line; 
         file.open(name);
-        getline(file, line); //peguei a primeira linha
-        Node ** pNode = &pRoot; //ponteiro duplo pois é a mesma ideia do insert da linkedlist
-        stringstream split; //stringstream para receber a linha da file
-        split << line; //passei line para o split
+        getline(file, line); 
+        Node ** pNode = &pRoot; 
+        stringstream split; 
+        split << line; 
         string cur_name;
         while(split >> cur_name){
 	       	if(exec_diserializa(pNode, cur_name, split)) break;
@@ -236,30 +236,32 @@ void leitura(string texto) {
     }
 
     bool exec_diserializa(Node ** pNode, string cur, stringstream  & split){
-        if(cur == "]") return 1; //se for um parenteses, eu devo subir, então retorno verdadeiro
+        if(cur == "]") return 1; //se for "]" , eu devo subir, entao retorno verdadeiro
 
         //se nao for um "[" , eu crio um novo node com cur
 
     	Node *p;
 
-        (*pNode)->children[stoi(cur)] = p; //digo que é filho do pNode da atual recursão
-        pNode = &(*pNode)->children[stoi(cur)]; //caminho para esse filho
+        (*pNode)->children[stoi(cur)] = p; 
+        pNode = &(*pNode)->children[stoi(cur)]; 
 
         string isvector;string id;
-        split >> isvector; //recebe o pr�ximo valor que vai ser "{" ou " "
+        split >> isvector; //recebe o proximo valor que vai ser "{" ou " "
 
         if(isvector == "{"){ //se for "{"
         	split >> id; //recebo os ids
 
-        	//(*pNode)->documents.pushback( stoi(id) ); //e salvo
+        	auto it = equal_range(((*pNode)->documents).begin(), ((*pNode)->documents).end(), stoi(id));
+			if (it.first == it.second){((*pNode)->documents).insert(it.first, stoi(id));}
 		}
 
         while(split >> cur){ //continuo recebendo strings da split
-           //vou descendo, até retorna um verdadeiro
+           //vou descendo, ate retorna um verdadeiro
             if(exec_diserializa(pNode, cur, split)) break;
         }
         return 0;
     }
+    
 
 
 //Return titles sorted
