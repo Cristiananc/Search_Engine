@@ -27,6 +27,7 @@ class Trie{
 public:
     Node *pRoot = new Node;
     Trie(){}
+    bool continu_searc = true;  // identifica se o usuario quer continuar a pesquisar
     //Checks if a char belongs to the alphabet being used.
     bool is_alphabetchar(char c){
 	    return (('a' <= c && c <= 'z') or ('0' <= c && c <= '9'));
@@ -59,6 +60,41 @@ public:
 		auto it = equal_range((p->documents).begin(), (p->documents).end(), docId);
 		if (it.first == it.second){(p->documents).insert(it.first, docId);}
 	}
+
+	void printa(int id) {
+
+        ifstream arquivo;               // arquivo a ser lido
+        string line = "";               // a linha em cada iteração
+        int ID = id/10000;              // o módulo id por 10000
+        bool b = false;                 // para saber se já iniciamos a leitura do texto em questão
+        int t = to_string(id).size();
+        arquivo.open("retorna/orig_docc_"+to_string(ID)+".txt");   // abrindo arquivo
+        if(arquivo.is_open()) {
+            while(getline(arquivo, line)) {
+                    line = line+'\n';
+                    if(line.size() >= 8+t) {
+                        if (line.substr(0,8+t) == "<doc id="+to_string(id)) {   //verifica se o id corresponde
+                            b = true;
+                            cout << line << endl;
+                            line = "";
+                        }
+                        else if(line.size() >= 12) {
+                            if(line.substr(0,12) == "ENDOFARTICLE" && b) { break;}  //verifica se é o final de um texto
+                            else {if(b) {cout << line;} line = "";}
+                        }
+                        else { if(b) {cout << line;} line = "";}
+                    }
+                    else if(line.size() >= 12 && b) {
+                        if (line.substr(0,12) == "ENDOFARTICLE" && b) { break;}
+                        else {if(b) {cout << line;} line = "";}
+                    }
+                    else if(b) {cout << line;}
+            }
+        }
+        arquivo.close();
+
+
+    }
 
 void leitura(string texto) {
         clock_t t0 = clock();
@@ -160,7 +196,7 @@ void leitura(string texto) {
     return (pCurr -> documents);
     }
 
-	
+
 	void serializa(string name){
 		ofstream file;
 		file.open(name);
@@ -184,14 +220,14 @@ void leitura(string texto) {
 		}
 		file << "]";
 	}
-	
+
 	void diserializa(string name){
         ifstream file; //file do tipo input
         string line; //string para pegar a primeira linha da file
-        file.open(name); 
+        file.open(name);
         getline(file, line); //peguei a primeira linha
         Node ** pNode = &pRoot; //ponteiro duplo pois é a mesma ideia do insert da linkedlist
-        stringstream split; //stringstream para receber a linha da file 
+        stringstream split; //stringstream para receber a linha da file
         split << line; //passei line para o split
         string cur_name;
         while(split >> cur_name){
@@ -201,23 +237,23 @@ void leitura(string texto) {
 
     bool exec_diserializa(Node ** pNode, string cur, stringstream  & split){
         if(cur == "]") return 1; //se for um parenteses, eu devo subir, então retorno verdadeiro
-        
+
         //se nao for um "[" , eu crio um novo node com cur
-        
+
     	Node *p;
-        
+
         (*pNode)->children[stoi(cur)] = p; //digo que é filho do pNode da atual recursão
         pNode = &(*pNode)->children[stoi(cur)]; //caminho para esse filho
-        
+
         string isvector;string id;
         split >> isvector; //recebe o pr�ximo valor que vai ser "{" ou " "
-        
+
         if(isvector == "{"){ //se for "{"
         	split >> id; //recebo os ids
-        	
+
         	//(*pNode)->documents.pushback( stoi(id) ); //e salvo
 		}
- 
+
         while(split >> cur){ //continuo recebendo strings da split
            //vou descendo, até retorna um verdadeiro
             if(exec_diserializa(pNode, cur, split)) break;
@@ -247,9 +283,25 @@ void leitura(string texto) {
                     cout << "[" << indexVec + 1 << "] " << line << endl;
                     ++ indexVec;
 
-                    if(indexVec == ids.size()) {cout << endl << endl <<  "encerrando pesquisa para a palavra :)" << endl << endl;}
+                    if(indexVec == ids.size()) {cout << endl;
+                    cout << "tecle r + ENTER para encerrar, outra tecla + ENTER para sair ou o numero do texto escolhido: "; cin >> aux;
+                    bool b2 = true;
+                    for(int i = 0; i < aux.size(); i++) {
+                        if (!isdigit(aux[i])) {b2 = false;}
+                    }
+                    if(aux != "" && b2) {printa(ids[stoi(aux)-1]); cout << endl << ids[stoi(aux)-1] << endl; break;}
+                    else if(aux == "r") {continu_searc = false; break;}
+                     cout <<  "encerrando pesquisa para a palavra :)" << endl << endl;}
 
-                    if(indexVec == numberOfTitles*20){cout << "tecle s + ENTER para a proxima pagina ou outra tecla + ENTER para sair: "; cin >> aux; if(aux != "s")
+                    if(indexVec == numberOfTitles*20){
+                    cout << "tecle s + ENTER para a proxima pagina, outra tecla + ENTER para sair, r para encerrar ou o numero do texto escolhido: "; cin >> aux;
+                    bool b2 = true;
+                    for(int i = 0; i < aux.size(); i++) {
+                        if (!isdigit(aux[i])) {b2 = false;}
+                    }
+                    if(aux != "" && b2) {printa(ids[stoi(aux)-1]); cout << endl << ids[stoi(aux)-1] << endl; break;}
+                    else if(aux == "r") {continu_searc = false; break;}
+                    else if(aux != "s")
                         {cout << endl << endl << "encerrando pesquisa :)" << endl; break;}
                     else{numberOfTitles += 1;}
                     }
@@ -277,7 +329,7 @@ void leitura(string texto) {
         vector<string> words;
         int auxx = 1;
 
-        while(true){
+        while(continu_searc){
         cout << "O que procuras (aperte ENTER para pesquisar): " << endl;
         getline(cin, word);
         words = clean_input(word);
@@ -290,7 +342,7 @@ void leitura(string texto) {
         double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
         cout << "(" << tf << " segundos)" << endl;
         cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
-        
+
         if (ids.size() == 0){
             cout << "Desculpe, não encontramos sua pesquisa para " << word << " :(" << endl;
             set<string> suggestions = {};
@@ -302,10 +354,10 @@ void leitura(string texto) {
                     int count = 1;
                     for (set<string>::iterator it = suggestions.begin(); it != suggestions.end(); ++it) {
                     cout << "[" << count << "]" << *it << endl;
-                    count++;                    
+                    count++;
                     }
                     char aux;
-                    cout << "tecle o número da sugestão + ENTER para pesquisá-la: "; cin >> aux; 
+                    cout << "tecle o número da sugestão + ENTER para pesquisá-la: "; cin >> aux;
                     int ia = aux - '0' - 1;
                     if(0 <= ia < suggestions.size()){
                     string x = *next(suggestions.begin(), ia);
@@ -352,10 +404,10 @@ return idsIntersec;
         results.push_back(word.substr(0,i) + word.substr(i + 1));
         }
     //Transposes
-    for (int i = 0; i < word.size() - 1; i++){ 
+    for (int i = 0; i < word.size() - 1; i++){
         results.push_back(word.substr(0, i) + word[i + 1] + word[i] + word.substr(i + 2));
     }
-    for (char j = 'a'; j <= 'z'; ++ j){    
+    for (char j = 'a'; j <= 'z'; ++ j){
     //Replaces
         for(int i = 0; i < word.size(); i++){
             results.push_back(word.substr(0, i) + j + word.substr(i + 1));
