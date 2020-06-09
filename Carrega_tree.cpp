@@ -208,12 +208,12 @@ void leitura(string texto) {
 	void exec_serializa(Node * pCur, ofstream & file){
 		if ( !(pCur->documents).empty() ){
 					for(std::vector<int>::iterator it = pCur->documents.begin() ; it != pCur->documents.end(); ++it){
-						file << "|" << *it << " ";
+						file << "|" << *it ;
 					}
 				}
 		for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
 			if (pCur -> children[i] != nullptr){
-				file << i << " ";
+				file << " " << i;
 				exec_serializa(pCur-> children[i], file);
 			}
 		}
@@ -237,24 +237,22 @@ void leitura(string texto) {
     bool exec_diserializa(Node ** pNode, string cur, stringstream  & split){
         if(cur == "]") return 1; //se for "]" , eu devo subir, entao retorno verdadeiro
 
-        //se nao for um "[" , eu crio um novo node com cur
-
-    	Node *p;
-
-        (*pNode)->children[stoi(cur)] = p; 
-        pNode = &(*pNode)->children[stoi(cur)];
-
-        string isvector;string id;
-        split >> isvector; //recebe o proximo valor que vai ser "|" ou " "
-
-        if(isvector == "|"){ //se for "|"
+        if(cur == "|"){ //se for "|" a seguir é um id
+        	string id;
         	split >> id; //recebo os ids
 
         	auto it = equal_range(((*pNode)->documents).begin(), ((*pNode)->documents).end(), stoi(id));
 			if (it.first == it.second){((*pNode)->documents).insert(it.first, stoi(id));}
 		}
-
+		
+		else{
+			
+			Node *p;
+			(*pNode)->children[stoi(cur)] = p; 
+        	pNode = &(*pNode)->children[stoi(cur)];
+		}
         while(split >> cur){ //continuo recebendo strings da split
+        	
            //vou descendo, ate retorna um verdadeiro
             if(exec_diserializa(pNode, cur, split)) break;
         }
@@ -453,22 +451,22 @@ int main() {
 
 Trie Trie;
 	
-    //Trie.serializa("serializada");
-
-    DIR* dir;
-    struct dirent* entry;
-    dir  = opendir("out_rept");
-    while((entry = readdir(dir))){
-            string s = entry->d_name;
-            if( s!= "." && s != "..") {
-                Trie.leitura("out_rept/"+s);
-            }
-    }
     //Trie.serializa("Trie_carrega_tree");
-    //Trie.diserializa("Trie_carrega_tree");
+
+//    DIR* dir;
+//    struct dirent* entry;
+//    dir  = opendir("out_rept");
+//    while((entry = readdir(dir))){
+//            string s = entry->d_name;
+//            if( s!= "." && s != "..") {
+//                Trie.leitura("out_rept/"+s);
+//            }
+//    }
+
+    Trie.diserializa("Trie_carrega_tree");
     
     
-    //Trie.executeSearch();
+    Trie.executeSearch();
     return 0;
 }
 
