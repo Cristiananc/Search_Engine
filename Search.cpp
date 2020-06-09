@@ -75,7 +75,8 @@ public:
                     if(line.size() >= 8+t) {
                         if (line.substr(0,8+t) == "<doc id="+to_string(id)) {   //verifica se o id corresponde
                             b = true;
-                            cout << line << endl;
+                            size_t pos = line.find("nonfiltered");      // position of "nonfilteres" in string line
+                            cout << line.substr(15 + t, pos - 22) << endl;
                             line = "";
                         }
                         else if(line.size() >= 12) {
@@ -193,9 +194,7 @@ void leitura(string texto) {
         }
         pCurr = pCurr -> children[ind];
     }
-    return (pCurr -> documents);
-    }
-
+    return (pCurr -> documents);}
 
 	void serializa(string name){
 		ofstream file;
@@ -263,7 +262,6 @@ void leitura(string texto) {
     }
     
 
-
 //Return titles sorted
     void getTitle(vector<int> ids){
         ifstream titlesFile;
@@ -326,7 +324,6 @@ void leitura(string texto) {
 
 //Do the search in the tree for each word returned from the clean-input function
     	void executeSearch(){
-	    Node *p = pRoot;
         string word;
         vector<string> words;
         int auxx = 1;
@@ -364,9 +361,50 @@ void leitura(string texto) {
                     if(0 <= ia < suggestions.size()){
                     string x = *next(suggestions.begin(), ia);
                     vector<string> wordSug = {x};
+
+                    clock_t t0 = clock();
                     search_words(wordSug, ids);
+                    double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
+                    cout << "(" << tf << " segundos)" << endl;
+
+                    cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
                     cout << "Pagínas encontradas para: " << x << endl;
                     getTitle(ids);
+                    }
+                }
+            }
+            else{
+                vector<string> suges1 = {};
+                int n = 1;
+                bool auxI = false;
+                for(int i = 0; i < words.size(); ++i){
+                    if(search(words[i]).empty()){
+                        suggestion(words[i], suggestions, n);
+                        for (set<string>::iterator it = suggestions.begin(); it != suggestions.end(); ++it) {
+                            suges1.push_back(*it);
+                            auxI = true;
+                            }
+                        }
+                    else{
+                        suges1.push_back(words[i]);
+                    }
+                }
+                if(auxI){
+                    cout << "Você quis dizer: " << endl;
+                    for (vector<string>::iterator it = suges1.begin(); it != suges1.end(); ++it) {
+                        cout << *it << ' ';
+                    }
+                    cout << endl;
+                    char aux;
+                    cout << "tecle s + ENTER para pesquisá-la: "; cin >> aux;
+                    if(aux == 's'){
+                        clock_t t0 = clock();
+                        search_words(suges1, ids);
+                        double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
+                        cout << "(" << tf << " segundos)" << endl;                        
+                        cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
+                        cout << "Pagínas encontradas: " << endl;
+                        getTitle(ids);
                     }
                 }
             }
@@ -444,10 +482,7 @@ void suggestion(string word, set<string> &sugges, int numSuge){
 }
 
 bool isdigit (char c){
-    return('0' <= c && c <= '9');
-}
-//Return texts
-
+    return('0' <= c && c <= '9');}
 };
 
 int main() {
