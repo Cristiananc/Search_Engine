@@ -1,9 +1,23 @@
 <header>
-    <title> Search Engine</title>
-    <meta http-equiv="Content-Type" content="text/html; charset = utf-8">
+	<title>Servidor C++</title> 
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </header>
 
 <body>
+<p>Meu primeiro servidor construído em C++</p>
+<p>Qual seu nome?</p>
 
-    <script src = "script.js"> </script>
+<form onsubmit="return false;" method="get">
+<input id = "name" type = "text" placeholder ="Seu nome" autofocus>
+<input id = "btn" type = "button" onclick="query()" value ="Enviar">
+</form>
+
+
+<div id ="output"></div>
+<div id = "image"></div>
+
+<script src = "script.js"></script>
 </body>
+
+
+

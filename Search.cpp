@@ -39,10 +39,10 @@ public:
     //Auxiliar function to find corresponding index
     int index(char c){
         if ('a' <= c && c <= 'z'){
-		    int index = c - 'a' + 10;
+		    int ind = c - 'a' + 10;
 		}
    	    else if ('0' <= c && c <= '9'){
-		    int index = c - '0';
+		    int ind = c - '0';
 	    }
     }
 
@@ -500,6 +500,7 @@ Trie Trie;
                 Trie.leitura("out_rept/"+s);
             }
     }
+
     Trie.executeSearch();
     return 0;
 }
