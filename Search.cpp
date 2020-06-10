@@ -485,23 +485,3 @@ bool isdigit (char c){
     return('0' <= c && c <= '9');}
 };
 
-int main() {
-
-Trie Trie;
-
-    Trie.serializa("serializada");
-
-    DIR* dir;
-    struct dirent* entry;
-    dir  = opendir("out_rept");
-    while((entry = readdir(dir))){
-            string s = entry->d_name;
-            if( s!= "." && s != "..") {
-                Trie.leitura("out_rept/"+s);
-            }
-    }
-
-    Trie.executeSearch();
-    return 0;
-}
-
