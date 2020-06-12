@@ -8,6 +8,8 @@
 #include <dirent.h>
 #include <set>
 
+#include <typeinfo>
+
 using namespace std;
 
 const int ALPHABET_SIZE = 36;
@@ -184,18 +186,18 @@ void leitura(string texto) {
 }
 
 //Searching for a word in the tree
-    vector<int> search(string key){
-    Node *pCurr = pRoot;
-    vector<int> vec = {};
-    for(int i =0; i < key.length(); i++){
-        int ind = index(key[i]);
-        if(!pCurr -> children[ind]){
-            return vec;
-        }
-        pCurr = pCurr -> children[ind];
-    }
-    return (pCurr -> documents);
-    }
+	vector<int> search(string key){
+	    Node *pCurr = pRoot;
+	    vector<int> vec = {};
+	    for(int i =0; i < key.length(); i++){
+	        int ind = index(key[i]);
+	        if(!pCurr -> children[ind]){
+	            return vec;
+	        }
+	        pCurr = pCurr -> children[ind];
+	    }
+	    return (pCurr -> documents);
+	}
 
 
 	void serializa(string name){
@@ -207,17 +209,19 @@ void leitura(string texto) {
 
 	void exec_serializa(Node * pCur, ofstream & file){
 		if ( !(pCur->documents).empty() ){
-					for(std::vector<int>::iterator it = pCur->documents.begin() ; it != pCur->documents.end(); ++it){
-						file << "|" << *it ;
-					}
+				file << " |";
+				for(std::vector<int>::iterator it = pCur->documents.begin() ; it != pCur->documents.end(); ++it){
+					file << " " << *it ;
 				}
+				file << " |";
+			}
 		for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
 			if (pCur -> children[i] != nullptr){
 				file << " " << i;
 				exec_serializa(pCur-> children[i], file);
 			}
 		}
-		file << "]";
+		file << " ]";
 	}
 
 	void diserializa(string name){
@@ -236,23 +240,24 @@ void leitura(string texto) {
 
     bool exec_diserializa(Node ** pNode, string cur, stringstream  & split){
         if(cur == "]") return 1; //se for "]" , eu devo subir, entao retorno verdadeiro
-
+		
         if(cur == "|"){ //se for "|" a seguir é um id
+            cout << endl;
         	string id;
-        	split >> id; //recebo os ids
-
-        	auto it = equal_range(((*pNode)->documents).begin(), ((*pNode)->documents).end(), stoi(id));
-			if (it.first == it.second){((*pNode)->documents).insert(it.first, stoi(id));}
+        	while(split >> id){
+        		if(id == "|") break;
+        		cout << id << " ";
+        		((*pNode)->documents).push_back(stoi(id));
+			}
 		}
 		
 		else{
-			
-			Node *p;
+			cout << cur;
+			Node *p = new Node;
 			(*pNode)->children[stoi(cur)] = p; 
         	pNode = &(*pNode)->children[stoi(cur)];
 		}
         while(split >> cur){ //continuo recebendo strings da split
-        	
            //vou descendo, ate retorna um verdadeiro
             if(exec_diserializa(pNode, cur, split)) break;
         }
@@ -322,7 +327,7 @@ void leitura(string texto) {
     }
 
 //Do the search in the tree for each word returned from the clean-input function
-    	void executeSearch(){
+    void executeSearch(){
 	    Node *p = pRoot;
         string word;
         vector<string> words;
@@ -378,80 +383,79 @@ void leitura(string texto) {
     }
 }
 
-//Intersecao de ids no caso de mais de uma palavra sendo pesquisada
-vector<int> intersection(vector<int> ids1, vector<int> ids2){
-    vector<int> idsIntersec = {};
-    int i = 0;
-    int j = 0;
-    while(i < ids1.size() && j < ids2.size()){
-    if(ids1[i] == ids2[j]){
-        idsIntersec.push_back(ids1[i]);
-        i ++;
-        j ++;
-    }
-    else if(ids1[i] < ids2[j]){i ++;}
-    else{j ++;}
-}
-return idsIntersec;
-}
+	//Intersecao de ids no caso de mais de uma palavra sendo pesquisada
+	vector<int> intersection(vector<int> ids1, vector<int> ids2){
+	    vector<int> idsIntersec = {};
+	    int i = 0;
+	    int j = 0;
+	    while(i < ids1.size() && j < ids2.size()){
+	    if(ids1[i] == ids2[j]){
+	        idsIntersec.push_back(ids1[i]);
+	        i ++;
+	        j ++;
+	    }
+	    else if(ids1[i] < ids2[j]){i ++;}
+	    else{j ++;}
+	}
+	return idsIntersec;
+	}
 
-//Suggestion of words
-//Its given a word that wasn't find in the trie and returns a suggestion
- void edits1(string word, vector<string> &results){
-    //Deletion
-    for(int i = 0; i < word.size(); i++){
-        results.push_back(word.substr(0,i) + word.substr(i + 1));
-        }
-    //Transposes
-    for (int i = 0; i < word.size() - 1; i++){
-        results.push_back(word.substr(0, i) + word[i + 1] + word[i] + word.substr(i + 2));
-    }
-    for (char j = 'a'; j <= 'z'; ++ j){
-    //Replaces
-        for(int i = 0; i < word.size(); i++){
-            results.push_back(word.substr(0, i) + j + word.substr(i + 1));
-        }
-    //Inserts
-        for(int i = 0; i < word.size() + 1; i++){
-            results.push_back(word.substr(0, i) + j + word.substr(i));
-        }
-    }
-}
+	//Suggestion of words
+	//Its given a word that wasn't find in the trie and returns a suggestion
+	 void edits1(string word, vector<string> &results){
+	    //Deletion
+	    for(int i = 0; i < word.size(); i++){
+	        results.push_back(word.substr(0,i) + word.substr(i + 1));
+	        }
+	    //Transposes
+	    for (int i = 0; i < word.size() - 1; i++){
+	        results.push_back(word.substr(0, i) + word[i + 1] + word[i] + word.substr(i + 2));
+	    }
+	    for (char j = 'a'; j <= 'z'; ++ j){
+	    //Replaces
+	        for(int i = 0; i < word.size(); i++){
+	            results.push_back(word.substr(0, i) + j + word.substr(i + 1));
+	        }
+	    //Inserts
+	        for(int i = 0; i < word.size() + 1; i++){
+	            results.push_back(word.substr(0, i) + j + word.substr(i));
+	        }
+	    }
+	}
 
-void edits2(string word, vector<string> &results2){
-    vector<string> results = {};
-    edits1(word, results);
-    results2.insert(results2.end(), results.begin(), results.end());
-    for(int i = 0; i < results.size(); i++){
-        vector<string> results1 = {};
-        edits1(results[i], results1);
-        results2.insert(results2.end(), results1.begin(), results1.end());
-    }
-}
+	void edits2(string word, vector<string> &results2){
+	    vector<string> results = {};
+	    edits1(word, results);
+	    results2.insert(results2.end(), results.begin(), results.end());
+	    for(int i = 0; i < results.size(); i++){
+	        vector<string> results1 = {};
+	        edits1(results[i], results1);
+	        results2.insert(results2.end(), results1.begin(), results1.end());
+	    }
+	}
 
-void suggestion(string word, set<string> &sugges, int numSuge){
-    vector<string> results;
-    edits2(word, results);
-    for(int i =0; i < results.size(); i++){
-        if(!search(results[i]).empty()){
-            sugges.emplace(results[i]);
-        }
-        if (sugges.size() == numSuge){break;}
-    }
-}
+	void suggestion(string word, set<string> &sugges, int numSuge){
+	    vector<string> results;
+	    edits2(word, results);
+	    for(int i =0; i < results.size(); i++){
+	        if(!search(results[i]).empty()){
+	            sugges.emplace(results[i]);
+	        }
+	        if (sugges.size() == numSuge){break;}
+	    }
+	}
 
-bool isdigit (char c){
-    return('0' <= c && c <= '9');
-}
-//Return texts
+	bool isdigit (char c){
+	    return('0' <= c && c <= '9');
+	}
+	//Return texts
 
 };
 
 int main() {
 
 Trie Trie;
-	
-    //Trie.serializa("Trie_carrega_tree");
+
 
 //    DIR* dir;
 //    struct dirent* entry;
@@ -462,11 +466,12 @@ Trie Trie;
 //                Trie.leitura("out_rept/"+s);
 //            }
 //    }
+//	Trie.serializa("Trie_carrega_tree");
 
     Trie.diserializa("Trie_carrega_tree");
     
     
-    Trie.executeSearch();
+    //Trie.executeSearch();
     return 0;
 }
 
