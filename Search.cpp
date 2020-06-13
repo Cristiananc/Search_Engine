@@ -487,5 +487,6 @@ void suggestion(string word, set<string> &sugges, int numSuge){
 
 bool isdigit (char c){
     return('0' <= c && c <= '9');}
+
 };
 

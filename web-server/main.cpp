@@ -1,6 +1,5 @@
 #include "lib/server_http.hpp" //Chamando pacotes do Simple Web Server
 #include "../Search.cpp"
-
 #include <sstream>
 #include <fstream>
 #include <string>
@@ -9,32 +8,54 @@
 //Para abrir localmente
 //g++ main.cpp -I /usr/include -lboost_system -lboost_thread -lpthread
 
-
 using namespace std;
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 
 Trie trie;
 
-string showTitles(int &count, int qntd){
+string title(int id){
+    ifstream titlesFile;
+    string line;
+    titlesFile.open("../titulos.txt");
+    int countLine = 0;
+    if(!titlesFile){
+        cerr << "Não foi possível abrir o arquivo contendo a página de títulos";
+        exit(1); //call system to stop
+        }
+    else{
+        while(getline(titlesFile, line)){
+            if(countLine == id){
+                return line;
+            }
+            countLine ++;
+        }
+    }
+}
+
+string showTitles(vector<int> ids, int &count, int qntd){
 	string aux;
 	for(; count < qntd; count++){
 		aux = aux + "<a href =javascript:query_link(\'cpp_server_open_page";
-		aux = aux + to_string(count) + "\'); > ";
-		aux = aux + "blá blá" + "</a></br>";
+		aux = aux + to_string(count) + "\'); > " + "[" + to_string(count + 1) + "] ";
+		aux = aux + title(ids[count]) + "</a></br>";
+
+		if(count + 1 == qntd || (count > 0 && (count+ 1) % 20 == 0)){
+			return aux;
+		}
 	}
 	return aux;
 }
 
-
 string createPage(Trie trie, string query){
 	string aux;
+	string head;
 	vector<string> words;
-        words = trie.clean_input(query);
+    words = trie.clean_input(query);
 
 	if(words.size() > 0){
-	        vector<int> ids;
-	        clock_t t0 = clock();
-	        trie.search_words(words, ids);
+	    vector<int> ids;
+	    clock_t t0 = clock();
+	    trie.search_words(words, ids);
 		double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000);
 		aux =  "\n (" + to_string(tf) + " seconds)" ;
 		aux = aux + "\n" + to_string(ids.size()) + " results were found!";
@@ -59,8 +80,9 @@ string createPage(Trie trie, string query){
 	}
 	else{
 		int count = 0;
-		return aux + '\n' + showTitles(count, ids.size());
+		return aux + '\n' + showTitles(ids, count, ids.size());
 	}
+
 }
 }
 

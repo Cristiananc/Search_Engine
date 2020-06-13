@@ -1,3 +1,7 @@
+#include "Search.cpp"
+using namespace std;
+
+int main(){
 Trie trie;
 
     DIR* dir;
@@ -12,3 +16,5 @@ Trie trie;
     trie.serializa("serializada");
 
     trie.executeSearch();
+}
+
