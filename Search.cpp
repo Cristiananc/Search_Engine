@@ -61,10 +61,11 @@ public:
 		if (it.first == it.second){(p->documents).insert(it.first, docId);}
 	}
 
-	void printa(int id) {
+	string printa(int id) {
 
         ifstream arquivo;               // arquivo a ser lido
         string line = "";               // a linha em cada iteração
+        string texto;                   // armazena o texto numa string
         int ID = id/10000;              // o módulo id por 10000
         bool b = false;                 // para saber se já iniciamos a leitura do texto em questão
         int t = to_string(id).size();
@@ -72,11 +73,13 @@ public:
         if(arquivo.is_open()) {
             while(getline(arquivo, line)) {
                     line = line+'\n';
+                    if (b) { texto = texto+line;}
                     if(line.size() >= 8+t) {
                         if (line.substr(0,8+t) == "<doc id="+to_string(id)) {   //verifica se o id corresponde
                             b = true;
                             size_t pos = line.find("nonfiltered");      // position of "nonfilteres" in string line
                             cout << line.substr(15 + t, pos - 22) << endl;
+                            texto = texto+line;
                             line = "";
                         }
                         else if(line.size() >= 12) {
@@ -93,7 +96,7 @@ public:
             }
         }
         arquivo.close();
-
+        return texto;
 
     }
 
@@ -221,13 +224,13 @@ void leitura(string texto) {
 	}
 
 	void diserializa(string name){
-        ifstream file; 
-        string line; 
+        ifstream file;
+        string line;
         file.open(name);
-        getline(file, line); 
-        Node ** pNode = &pRoot; 
-        stringstream split; 
-        split << line; 
+        getline(file, line);
+        Node ** pNode = &pRoot;
+        stringstream split;
+        split << line;
         string cur_name;
         while(split >> cur_name){
 	       	if(exec_diserializa(pNode, cur_name, split)) break;
@@ -241,8 +244,8 @@ void leitura(string texto) {
 
     	Node *p;
 
-        (*pNode)->children[stoi(cur)] = p; 
-        pNode = &(*pNode)->children[stoi(cur)]; 
+        (*pNode)->children[stoi(cur)] = p;
+        pNode = &(*pNode)->children[stoi(cur)];
 
         string isvector;string id;
         split >> isvector; //recebe o proximo valor que vai ser "{" ou " "
@@ -260,7 +263,7 @@ void leitura(string texto) {
         }
         return 0;
     }
-    
+
 
 //Return titles sorted
     void getTitle(vector<int> ids){
@@ -401,7 +404,7 @@ void leitura(string texto) {
                         clock_t t0 = clock();
                         search_words(suges1, ids);
                         double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
-                        cout << "(" << tf << " segundos)" << endl;                        
+                        cout << "(" << tf << " segundos)" << endl;
                         cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
                         cout << "Pagínas encontradas: " << endl;
                         getTitle(ids);
@@ -480,6 +483,7 @@ void suggestion(string word, set<string> &sugges, int numSuge){
         if (sugges.size() == numSuge){break;}
     }
 }
+
 
 bool isdigit (char c){
     return('0' <= c && c <= '9');}
