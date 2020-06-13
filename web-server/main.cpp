@@ -15,6 +15,16 @@ using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 
 Trie trie;
 
+string showTitles(int &count, int qntd){
+	string aux;
+	for(; count < qntd; count++){
+		aux = aux + "<a href =javascript:query_link(\'cpp_server_open_page";
+		aux = aux + to_string(count) + "\'); > ";
+		aux = aux + "blá blá" + "</a></br>";
+	}
+	return aux;
+}
+
 
 string createPage(Trie trie, string query){
 	string aux;
@@ -40,17 +50,18 @@ string createPage(Trie trie, string query){
                     aux = aux + "\n Did you mean...: ";
                     int count = 1;
                     for (set<string>::iterator it = suggestions.begin(); it != suggestions.end(); ++it) {
-		    //Como clicar nas sugestões?
-                    //aux = aux + "\n" + *it;
+		    		//Como clicar nas sugestões?
+                    aux = aux + "\n" + *it;
                     }
-		}
+				return aux;
+			}
 		}
 	}
-}
 	else{
+		int count = 0;
+		return aux + '\n' + showTitles(count, ids.size());
+	}
 }
-return aux;
-
 }
 
 int main(){

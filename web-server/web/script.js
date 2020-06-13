@@ -14,3 +14,14 @@ function query(){
 			  })
 }
 
+function query_link(text_query) {
+	const URL = "http://localhost:8080/query?text="+text_query;
+  
+	fetch(URL)
+	  .then(function (response) {
+		  return response.json();
+	  })
+	  .then(function (data) {
+		  document.getElementById('output').innerHTML = data.res;
+	  })
+  }
