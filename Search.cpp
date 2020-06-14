@@ -62,7 +62,6 @@ public:
 	}
 
 	string printa(int id) {
-
         ifstream arquivo;               // arquivo a ser lido
         string line = "";               // a linha em cada iteração
         string texto;                   // armazena o texto numa string
@@ -73,31 +72,22 @@ public:
         if(arquivo.is_open()) {
             while(getline(arquivo, line)) {
                     line = line+'\n';
-                    if (b) { texto = texto+line;}
+                    if (b) {texto = texto + line;}
                     if(line.size() >= 8+t) {
                         if (line.substr(0,8+t) == "<doc id="+to_string(id)) {   //verifica se o id corresponde
                             b = true;
                             size_t pos = line.find("nonfiltered");      // position of "nonfilteres" in string line
-                            cout << line.substr(15 + t, pos - 22) << endl;
-                            texto = texto+line;
+                            texto = texto + line.substr(15 + t, pos - 22);
                             line = "";
                         }
                         else if(line.size() >= 12) {
                             if(line.substr(0,12) == "ENDOFARTICLE" && b) { break;}  //verifica se é o final de um texto
-                            else {if(b) {cout << line;} line = "";}
                         }
-                        else { if(b) {cout << line;} line = "";}
                     }
-                    else if(line.size() >= 12 && b) {
-                        if (line.substr(0,12) == "ENDOFARTICLE" && b) { break;}
-                        else {if(b) {cout << line;} line = "";}
-                    }
-                    else if(b) {cout << line;}
             }
         }
         arquivo.close();
         return texto;
-
     }
 
 void leitura(string texto) {
@@ -292,7 +282,7 @@ void leitura(string texto) {
                     for(int i = 0; i < aux.size(); i++) {
                         if (!isdigit(aux[i])) {b2 = false;}
                     }
-                    if(aux != "" && b2) {printa(ids[stoi(aux)-1]); cout << endl << ids[stoi(aux)-1] << endl; break;}
+                    if(aux != "" && b2) {cout << printa(ids[stoi(aux)-1]) << endl; cout << endl << ids[stoi(aux)-1] << endl; break;}
                     else if(aux == "r") {continu_searc = false; break;}
                      cout <<  "encerrando pesquisa para a palavra :)" << endl << endl;}
 
@@ -302,7 +292,7 @@ void leitura(string texto) {
                     for(int i = 0; i < aux.size(); i++) {
                         if (!isdigit(aux[i])) {b2 = false;}
                     }
-                    if(aux != "" && b2) {printa(ids[stoi(aux)-1]); cout << endl << ids[stoi(aux)-1] << endl; break;}
+                    if(aux != "" && b2) {cout << printa(ids[stoi(aux)-1]) << endl; cout << endl << ids[stoi(aux)-1] << endl; break;}
                     else if(aux == "r") {continu_searc = false; break;}
                     else if(aux != "s")
                         {cout << endl << endl << "encerrando pesquisa :)" << endl; break;}
@@ -483,7 +473,6 @@ void suggestion(string word, set<string> &sugges, int numSuge){
         if (sugges.size() == numSuge){break;}
     }
 }
-
 
 bool isdigit (char c){
     return('0' <= c && c <= '9');}
