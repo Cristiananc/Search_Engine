@@ -198,29 +198,29 @@ void leitura(string texto) {
 
 	void exec_serializa(Node * pCur, ofstream & file){
 		if ( !(pCur->documents).empty() ){
-					file << "{";
-					for(std::vector<int>::iterator it = pCur->documents.begin() ; it != pCur->documents.end(); ++it){
-						file << *it << " ";
-					}
-					file << "}";
+				file << " |";
+				for(std::vector<int>::iterator it = pCur->documents.begin() ; it != pCur->documents.end(); ++it){
+					file << " " << *it ;
 				}
+				file << " |";
+			}
 		for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
 			if (pCur -> children[i] != nullptr){
-				file << i << " ";
+				file << " " << i;
 				exec_serializa(pCur-> children[i], file);
 			}
 		}
-		file << "]";
+		file << " ]";
 	}
 
 	void diserializa(string name){
-        ifstream file;
-        string line;
+        ifstream file; 
+        string line; 
         file.open(name);
-        getline(file, line);
-        Node ** pNode = &pRoot;
-        stringstream split;
-        split << line;
+        getline(file, line); 
+        Node ** pNode = &pRoot; 
+        stringstream split; 
+        split << line; 
         string cur_name;
         while(split >> cur_name){
 	       	if(exec_diserializa(pNode, cur_name, split)) break;
@@ -229,24 +229,23 @@ void leitura(string texto) {
 
     bool exec_diserializa(Node ** pNode, string cur, stringstream  & split){
         if(cur == "]") return 1; //se for "]" , eu devo subir, entao retorno verdadeiro
-
-        //se nao for um "[" , eu crio um novo node com cur
-
-    	Node *p;
-
-        (*pNode)->children[stoi(cur)] = p;
-        pNode = &(*pNode)->children[stoi(cur)];
-
-        string isvector;string id;
-        split >> isvector; //recebe o proximo valor que vai ser "{" ou " "
-
-        if(isvector == "{"){ //se for "{"
-        	split >> id; //recebo os ids
-
-        	auto it = equal_range(((*pNode)->documents).begin(), ((*pNode)->documents).end(), stoi(id));
-			if (it.first == it.second){((*pNode)->documents).insert(it.first, stoi(id));}
+		
+        if(cur == "|"){ //se for "|" a seguir é um id
+            cout << endl;
+        	string id;
+        	while(split >> id){
+        		if(id == "|") break;
+        		cout << id << " ";
+        		((*pNode)->documents).push_back(stoi(id));
+			}
 		}
-
+		
+		else{
+			cout << cur;
+			Node *p = new Node;
+			(*pNode)->children[stoi(cur)] = p; 
+        	pNode = &(*pNode)->children[stoi(cur)];
+		}
         while(split >> cur){ //continuo recebendo strings da split
            //vou descendo, ate retorna um verdadeiro
             if(exec_diserializa(pNode, cur, split)) break;

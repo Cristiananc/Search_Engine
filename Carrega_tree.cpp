@@ -8,7 +8,6 @@
 #include <dirent.h>
 #include <set>
 
-#include <typeinfo>
 
 using namespace std;
 
@@ -59,8 +58,9 @@ public:
     		}
     	    p = p -> children[ind];
 		}
-		auto it = equal_range((p->documents).begin(), (p->documents).end(), docId);
-		if (it.first == it.second){(p->documents).insert(it.first, docId);}
+		(p->documents).push_back(docId);
+		//auto it = equal_range((p->documents).begin(), (p->documents).end(), docId);
+		//if (it.first == it.second){(p->documents).insert(it.first, docId);}
 	}
 
 	void printa(int id) {
@@ -457,21 +457,21 @@ int main() {
 Trie Trie;
 
 
-//    DIR* dir;
-//    struct dirent* entry;
-//    dir  = opendir("out_rept");
-//    while((entry = readdir(dir))){
-//            string s = entry->d_name;
-//            if( s!= "." && s != "..") {
-//                Trie.leitura("out_rept/"+s);
-//            }
-//    }
-//	Trie.serializa("Trie_carrega_tree");
+    DIR* dir;
+    struct dirent* entry;
+    dir  = opendir("out_rept");
+    while((entry = readdir(dir))){
+            string s = entry->d_name;
+            if( s!= "." && s != "..") {
+				  Trie.leitura("out_rept/"+s);
+            }
+    }
+	//Trie.serializa("Trie_carrega_tree");
 
-    Trie.diserializa("Trie_carrega_tree");
+    //Trie.diserializa("Trie_carrega_tree");
     
     
-    //Trie.executeSearch();
+    Trie.executeSearch();
     return 0;
 }
 
