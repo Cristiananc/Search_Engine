@@ -46,19 +46,25 @@ public:
 	    }
     }
 
-    void insert(string word, int docId){
+	void insert(string word, int docId){
 		Node *p = pRoot;
 		Node *pChar;
 		for (int i = 0; i < word.length() ; i++){
-		    int ind = index(word[i]);
-    		if(p -> children[ind] == nullptr){
-    		    pChar = new Node();
-    		    p -> children[ind] = pChar;
-    		}
-    	    p = p -> children[ind];
+            if(i == 0){}
+            else if(word[i] == ' ') {
+                (p->documents).push_back(docId);
+                 p = pRoot;
+            }
+            else if(word[i] == '\n') {(p->documents).push_back(docId); p = pRoot;}
+            else {
+                int ind = index(word[i]);
+                if(p -> children[ind] == nullptr){
+                    pChar = new Node();
+                    p -> children[ind] = pChar;
+                }
+                p = p -> children[ind];
+            }
 		}
-		auto it = equal_range((p->documents).begin(), (p->documents).end(), docId);
-		if (it.first == it.second){(p->documents).insert(it.first, docId);}
 	}
 
 	string printa(int id) {
@@ -90,50 +96,30 @@ public:
         return texto;
     }
 
-void leitura(string texto) {
-        clock_t t0 = clock();
-        bool f;             // verifica se faz parte de um id
-        int i = 0;          // conta as palavras
+	void leitura(string texto,int tf, int t) {
+
         int id;
-        string word ;       // a palavra de cada iteraçao
-        char c ;            // a letra em cada iteração
-        char c2;            // a letra da iteração anterior
         ifstream arquivo;   // arquivo a ser lido
+        string line;
+        int loc;
 
         arquivo.open(texto);
         if(arquivo.is_open()){
 
-            while(arquivo.get(c)) {
-
-                if (c == ' ' or c == '\n'){ // reconhecendo término de uma palavra
-                    if(c == ' ' && c2 == '\n') { f = true;
+            while(getline(arquivo, line)) {
+                    if(line.size() >= 5){
+                            if(line.substr(0,4) == " id=") {
+                                    line = line.substr(1,line.size()-1);
+                                    loc = line.find(" ");
+                                    id = stoi(line.substr(3,loc-3));
+                                    line = line.substr(loc,line.size()-loc);}
                     }
-                    if (f && word[0] == 'i' && word[1] == 'd' && word[2] == '=' && isdigit(word[3]) ){
-                        id = stoi(word.substr(3));
-                        word = "";
-                        f = false;
-                        i ++;
-                    }
-                    else if(word == ""){
-                    }
-                    else {
-                        insert(word, id); // chamando a função de insertar
-                        word = ""; // reinicio como vazia a variável word
-                        i ++;
-                        f = false;
-                    }
-                }
-                else {
-                    word = word+c; // acrescento à palavra o char atual
-                }
-                c2 = c;
+                    insert(line,id);
             }
         }
         arquivo.close();
-        //cout << ((((((pRoot)->children[23])->children[28])->children[29])->children[23])->documents)[2l] << endl;
-
-        clock_t tf = ((float)(clock()-t0))/CLOCKS_PER_SEC; // calculando tempo em segundos
-        cout << "segundos: "  << tf << endl << "palavras: " << i << endl;
+        cout << "texto "  << tf << "  " << endl;
+        if (tf == 4){ cout <<((float)clock() - (float)t)/CLOCKS_PER_SEC << endl;}
     }
     //Clean the user-input considering the alphabet used in the trie and split words if necessary
     vector<string> clean_input(string words){
