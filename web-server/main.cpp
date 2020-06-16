@@ -13,6 +13,7 @@ using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 
 Trie trie;
 vector<int> ids = {};
+int count_id = 0;
 
 string title(int id){
     ifstream titlesFile;
@@ -20,7 +21,7 @@ string title(int id){
     titlesFile.open("../titulos.txt");
     int countLine = 0;
     if(!titlesFile){
-        cerr << "Não foi possível abrir o arquivo contendo a página de títulos";
+        cerr << "Unable to open file";
         exit(1); //call system to stop
         }
     else{
@@ -30,14 +31,16 @@ string title(int id){
     }
 }
 
-string showTitles(vector<int> ids, int &count, int qntd){
+string showTitles(vector<int> ids, int &count_id, int qntd){
 	string aux;
-	for(; count < qntd; count++){
-		aux = aux + "<a href =javascript:query_link(\'cpp_server_open_page";
-		aux = aux + to_string(count) + "\'); > " + "[" + to_string(count + 1) + "] ";
-		aux = aux + title(ids[count]) + "</a></br>";
+	aux = aux + "<a href =javascript:query_link(\'cpp_server_showTitles\'); > Next </a></br>";
+	for(; count_id < qntd; count_id ++){
+		aux = aux + "<a href =javascript:query_link(\'cpp_server_open_page_";
+		aux = aux + to_string(count_id) + "\'); > " + "[" + to_string(count_id + 1) + "] ";
+		aux = aux + title(ids[count_id]) + "</a></br>";
 
-		if(count + 1 == qntd || (count > 0 && (count+ 1) % 20 == 0)){
+		if(count_id + 1 == qntd || (count_id > 0 && ((count_id + 1) % 20 == 0))){
+			count_id++;
 			return aux;
 		}
 	}
@@ -59,7 +62,7 @@ string printa(int id) {
                         if (line.substr(0,8+t) == "<doc id="+to_string(id)) {   //verifica se o id corresponde
                             b = true;
                             size_t pos = line.find("nonfiltered");      // position of "nonfilteres" in string line
-                            texto = texto + line.substr(16 + t, pos - 24);
+                            texto = texto + line.substr(15 + t, pos - 22);
                             line = "";
                         }
                         else if(line.size() >= 12) {
@@ -73,16 +76,20 @@ string printa(int id) {
         return texto;
     }
 
-string createPage(Trie trie, string query, vector<int> &ids){
+string createPage(Trie trie, string query, vector<int> &ids, int &count_id){
 	string aux = query + "####################";
 	string click = "";
 
-	for(int i = 0; i < 20; i++){click = click + aux[i];}
-		if(click == "cpp_server_open_page"){
+	for(int i = 0; i < 21; i++){click = click + aux[i];}
+		if(click == "cpp_server_open_page_"){
 			aux = "";
 
-	for(int i = 20; i < query.size(); i++){aux = aux + query[i];}
+	for(int i = 21; i < query.size(); i++){aux = aux + query[i];}
 		return printa(ids[stoi(aux)]);}
+
+		else if(click == "cpp_server_showTitles"){
+			return showTitles(ids, count_id, ids.size());
+		}
 
 	aux = "";
 	vector<string> words;
@@ -104,7 +111,7 @@ string createPage(Trie trie, string query, vector<int> &ids){
 
                 if(suggestions.size() > 0){
                     aux = aux + "\n Did you mean...: ";
-                    int count = 1;
+                    int c = 1;
                     for (set<string>::iterator it = suggestions.begin(); it != suggestions.end(); ++it) {
 		    		//Como clicar nas sugestões?
                     aux = aux + "\n" + *it;
@@ -114,22 +121,27 @@ string createPage(Trie trie, string query, vector<int> &ids){
 		}
 	}
 	else{
-		int count = 0;
-		return aux + '\n' + showTitles(ids, count, ids.size());
+		count_id = 0;
+		return aux + '\n' + showTitles(ids, count_id, ids.size());
 	}
 }
 }
 
 int main(){
+
+    clock_t t0 = clock();
+    int c = 0;
     DIR* dir;
     struct dirent* entry;
     dir  = opendir("../out_rept");
     while((entry = readdir(dir))){
             string s = entry->d_name;
             if( s!= "." && s != "..") {
-                trie.leitura("../out_rept/"+s);
+                c = c+1;
+                trie.leitura("../out_rept/"+s,c,t0);
             }
     }
+
 	HttpServer server;
 	server.config.port = 8080; //porta do servidor será localhost/8080
 
@@ -140,7 +152,7 @@ int main(){
 		auto query_fields = request->parse_query_string(); //Recebe o conteúdo de "entrada"
 		auto it = query_fields.find("text"); // Obtem o texto do conteudo
 		
-		string html = createPage(trie, it -> second, ids);
+		string html = createPage(trie, it -> second, ids, count_id);
 		cout << html;
 		//A resposta para o servidor vai ser um JSON do formato
 		//{"res": "O seu projeto final vai ser incrível, [texto]!"}	
