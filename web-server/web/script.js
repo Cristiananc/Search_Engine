@@ -1,3 +1,15 @@
+function query_link(text_query) {
+	const URL = "http://localhost:8080/query?text="+text_query;
+  
+	fetch(URL)
+	  .then(function (response) {
+		  return response.json();
+	  })
+	  .then(function (data) {
+		  document.getElementById('output').innerHTML = data.res;
+	  })
+}
+
 function query(){
 	//Obtenho o texto digitado pelo usuário
 	const text_query = document.getElementById("name").value;
@@ -13,15 +25,3 @@ function query(){
 				document.getElementById("output").innerHTML = data.res;
 			  })
 }
-
-function query_link(text_query) {
-	const URL = "http://localhost:8080/query?text="+text_query;
-  
-	fetch(URL)
-	  .then(function (response) {
-		  return response.json();
-	  })
-	  .then(function (data) {
-		  document.getElementById('output').innerHTML = data.res;
-	  })
-  }

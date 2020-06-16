@@ -55,18 +55,18 @@ string printa(int id) {
         if(arquivo.is_open()) {
             while(getline(arquivo, line)) {
                     line = line+'\n';
-                    if (b) {texto = texto + line;}
                     if(line.size() >= 8+t) {
                         if (line.substr(0,8+t) == "<doc id="+to_string(id)) {   //verifica se o id corresponde
                             b = true;
                             size_t pos = line.find("nonfiltered");      // position of "nonfilteres" in string line
-                            texto = texto + line.substr(15 + t, pos - 22);
+                            texto = texto + line.substr(16 + t, pos - 24);
                             line = "";
                         }
                         else if(line.size() >= 12) {
                             if(line.substr(0,12) == "ENDOFARTICLE" && b) { break;}  //verifica se é o final de um texto
                         }
                     }
+		                if (b) {texto = texto + line;}
             }
         }
         arquivo.close();
@@ -82,8 +82,6 @@ string createPage(Trie trie, string query, vector<int> &ids){
 			aux = "";
 
 	for(int i = 20; i < query.size(); i++){aux = aux + query[i];}
-		cout << aux << endl;
-		cout << printa(ids[stoi(aux)]) << endl; 
 		return printa(ids[stoi(aux)]);}
 
 	aux = "";
