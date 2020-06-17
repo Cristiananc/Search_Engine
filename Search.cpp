@@ -119,7 +119,7 @@ public:
         }
         arquivo.close();
         cout << "texto "  << tf << "  " << endl;
-        if (tf == 4){ cout <<((float)clock() - (float)t)/CLOCKS_PER_SEC << endl;}
+        if (tf % 10 == 0){ cout <<((float)clock() - (float)t)/CLOCKS_PER_SEC << endl;}
     }
     //Clean the user-input considering the alphabet used in the trie and split words if necessary
     vector<string> clean_input(string words){
