@@ -16,7 +16,7 @@ Trie trie;
                 trie.leitura("out_rept/"+s,c,t0);
             }
     }
-    //trie.serializa("serializada");
+    trie.serializa("serializada");
 
     trie.executeSearch();
 }
