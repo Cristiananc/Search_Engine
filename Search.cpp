@@ -119,7 +119,7 @@ public:
         }
         arquivo.close();
         cout << "texto "  << tf << "  " << endl;
-        if (tf == 1){ cout <<((float)clock() - (float)t)/CLOCKS_PER_SEC << endl;}
+        if (tf == 4){ cout <<((float)clock() - (float)t)/CLOCKS_PER_SEC << endl;}
     }
     //Clean the user-input considering the alphabet used in the trie and split words if necessary
     vector<string> clean_input(string words){
@@ -185,7 +185,7 @@ public:
 	void exec_serializa(Node * pCur, ofstream & file){
 		if ( !(pCur->documents).empty() ){
 				file << " |";
-				for(std::vector<int>::iterator it = pCur->documents.begin() ; it != pCur->documents.end(); it++){
+				for(std::vector<int>::iterator it = pCur->documents.begin() ; it != pCur->documents.end(); ++it){
 					file << " " << *it ;
 				}
 				file << " |";
@@ -238,7 +238,7 @@ public:
         }
         return 0;
     }
-    ////////////////
+
 
 //Return titles sorted
     void getTitle(vector<int> ids){
