@@ -10,12 +10,12 @@ Trie trie;
     DIR* dir;
 
     struct dirent* entry;
-    dir  = opendir("out_rept");
+    dir  = opendir("for_tree");
     while((entry = readdir(dir))){
             string s = entry->d_name;
             if( s!= "." && s != "..") {
                 c = c+1;
-                trie.leitura("out_rept/"+s,c,t0);
+                trie.leitura("for_tree/"+s,c,t0);
             }
     }
 

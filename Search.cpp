@@ -74,7 +74,7 @@ public:
         int ID = id/10000;              // o módulo id por 10000
         bool b = false;                 // para saber se já iniciamos a leitura do texto em questão
         int t = to_string(id).size();
-        arquivo.open("retorna/orig_docc_"+to_string(ID)+".txt");   // abrindo arquivo
+        arquivo.open("originais_ordenados/orig_docc_"+to_string(ID)+".txt");   // abrindo arquivo
         if(arquivo.is_open()) {
             while(getline(arquivo, line)) {
                     line = line+'\n';

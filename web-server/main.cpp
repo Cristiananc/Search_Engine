@@ -54,7 +54,7 @@ string printa(int id) {
         int ID = id/10000;              // o módulo id por 10000
         bool b = false;                 // para saber se já iniciamos a leitura do texto em questão
         int t = to_string(id).size();
-        arquivo.open("../retorna/orig_docc_"+to_string(ID)+".txt");   // abrindo arquivo
+        arquivo.open("../originais_ordenados/orig_docc_"+to_string(ID)+".txt");   // abrindo arquivo
         if(arquivo.is_open()) {
             while(getline(arquivo, line)) {
                     line = line+'\n';
@@ -133,7 +133,7 @@ int main(){
     int c = 0;
     DIR* dir;
     struct dirent* entry;
-    dir  = opendir("../out_rept");
+    dir  = opendir("../for_tree");
     while((entry = readdir(dir))){
             string s = entry->d_name;
             if( s!= "." && s != "..") {
