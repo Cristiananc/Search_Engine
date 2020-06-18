@@ -118,7 +118,7 @@ public:
         }
         arquivo.close();
         cout << "texto "  << tf << "  " << endl;
-        if (tf % 10 == 0){ cout <<((float)clock() - (float)t)/CLOCKS_PER_SEC << endl;}
+        if (tf % 10 == 0 || tf == 135){ cout <<((float)clock() - (float)t)/CLOCKS_PER_SEC << endl;}
     }
     //Clean the user-input considering the alphabet used in the trie and split words if necessary
     vector<string> clean_input(string words){
@@ -167,7 +167,7 @@ public:
     }
     return (pCurr -> documents);}
 
-	void serializa(string name){
+	/*void serializa(string name){
 		ofstream file;
 		file.open(name);
 		Node * pNode = pRoot;
@@ -192,13 +192,13 @@ public:
 	}
 
 	void diserializa(string name){
-        ifstream file; 
-        string line; 
+        ifstream file;
+        string line;
         file.open(name);
-        getline(file, line); 
-        Node ** pNode = &pRoot; 
-        stringstream split; 
-        split << line; 
+        getline(file, line);
+        Node ** pNode = &pRoot;
+        stringstream split;
+        split << line;
         string cur_name;
         while(split >> cur_name){
 	       	if(exec_diserializa(pNode, cur_name, split)) break;
@@ -207,7 +207,7 @@ public:
 
     bool exec_diserializa(Node ** pNode, string cur, stringstream  & split){
         if(cur == "]") return 1; //se for "]" , eu devo subir, entao retorno verdadeiro
-		
+
         if(cur == "|"){ //se for "|" a seguir � um id
             cout << endl;
         	string id;
@@ -217,11 +217,11 @@ public:
         		((*pNode)->documents).push_back(stoi(id));
 			}
 		}
-		
+
 		else{
 			cout << cur;
 			Node *p = new Node;
-			(*pNode)->children[stoi(cur)] = p; 
+			(*pNode)->children[stoi(cur)] = p;
         	pNode = &(*pNode)->children[stoi(cur)];
 		}
         while(split >> cur){ //continuo recebendo strings da split
@@ -229,7 +229,7 @@ public:
             if(exec_diserializa(pNode, cur, split)) break;
         }
         return 0;
-    }
+    }*/
 
 
 //Return titles sorted
@@ -243,7 +243,7 @@ public:
         string aux;
         int numberOfTitles = 1;
         if(!titlesFile){
-            cerr << "Não foi possível abrir o arquivo contendo a página de títulos";
+            cerr << "It was not possible to open the file containing the title page";
             exit(1); //call system to stop
         }
         else{
@@ -254,17 +254,17 @@ public:
                     ++ indexVec;
 
                     if(indexVec == ids.size()) {cout << endl;
-                    cout << "tecle r + ENTER para encerrar, outra tecla + ENTER para sair ou o numero do texto escolhido: "; cin >> aux;
+                    cout << "type 'r'  to end, another key to search again or the number of the chosen text: "; cin >> aux;
                     bool b2 = true;
                     for(int i = 0; i < aux.size(); i++) {
                         if (!isdigit(aux[i])) {b2 = false;}
                     }
                     if(aux != "" && b2) {cout << printa(ids[stoi(aux)-1]) << endl; cout << endl << ids[stoi(aux)-1] << endl; break;}
                     else if(aux == "r") {continu_searc = false; break;}
-                     cout <<  "encerrando pesquisa para a palavra :)" << endl << endl;}
+                     cout <<  "ending search :)" << endl << endl;}
 
                     if(indexVec == numberOfTitles*20){
-                    cout << "tecle s + ENTER para a proxima pagina, outra tecla + ENTER para sair, r para encerrar ou o numero do texto escolhido: "; cin >> aux;
+                    cout << "type 's' for the next page, 'r' to end, another key to search again or the number of the chosen text: "; cin >> aux;
                     bool b2 = true;
                     for(int i = 0; i < aux.size(); i++) {
                         if (!isdigit(aux[i])) {b2 = false;}
@@ -272,7 +272,7 @@ public:
                     if(aux != "" && b2) {cout << printa(ids[stoi(aux)-1]) << endl; cout << endl << ids[stoi(aux)-1] << endl; break;}
                     else if(aux == "r") {continu_searc = false; break;}
                     else if(aux != "s")
-                        {cout << endl << endl << "encerrando pesquisa :)" << endl; break;}
+                        {cout << endl << endl << "ending search :)" << endl; break;}
                     else{numberOfTitles += 1;}
                     }
                 }
@@ -299,7 +299,7 @@ public:
         int auxx = 1;
 
         while(continu_searc){
-        cout << "O que procuras (aperte ENTER para pesquisar): " << endl;
+        cout << "Enter your query: " << endl;
         getline(cin, word);
         words = clean_input(word);
 
@@ -308,25 +308,25 @@ public:
         clock_t t0 = clock();
         search_words(words, ids);
 
-        double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
-        cout << "(" << tf << " segundos)" << endl;
-        cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
+        double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC); // calculando tempo em segundos
+        cout << "(" << tf << " seconds)" << endl;
+        cout << "About " << ids.size() << " results (" << tf << " seconds) \n \n";
 
         if (ids.size() == 0){
-            cout << "Desculpe, não encontramos sua pesquisa para " << word << " :(" << endl;
+            cout << "Sorry, we could not find your search for " << word << " :(" << endl;;
             set<string> suggestions = {};
             int nSugges = 5;
             if(words.size() == 1){
                 suggestion(words[0], suggestions, nSugges);
                 if(suggestions.size() > 0){
-                    cout << "Você quis dizer: " << endl;
+                    cout << "did you mean: " << endl;
                     int count = 1;
                     for (set<string>::iterator it = suggestions.begin(); it != suggestions.end(); ++it) {
                     cout << "[" << count << "]" << *it << endl;
                     count++;
                     }
                     char aux;
-                    cout << "tecle o número da sugestão + ENTER para pesquisá-la: "; cin >> aux;
+                    cout << "type the suggestion number + enter to search: "; cin >> aux;
                     int ia = aux - '0' - 1;
                     if(0 <= ia < suggestions.size()){
                     string x = *next(suggestions.begin(), ia);
@@ -334,11 +334,11 @@ public:
 
                     clock_t t0 = clock();
                     search_words(wordSug, ids);
-                    double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
-                    cout << "(" << tf << " segundos)" << endl;
+                    double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC); // calculando tempo em segundos
+                    cout << "(" << tf << " seconds)" << endl;
 
-                    cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
-                    cout << "Pagínas encontradas para: " << x << endl;
+                    cout << "About " << ids.size() << " results (" << tf << " seconds) "<< endl;
+                    cout << "Pages found for: " << x << endl;
                     getTitle(ids);
                     }
                 }
@@ -360,27 +360,27 @@ public:
                     }
                 }
                 if(auxI){
-                    cout << "Você quis dizer: " << endl;
+                    cout << "did you mean: " << endl;
                     for (vector<string>::iterator it = suges1.begin(); it != suges1.end(); ++it) {
                         cout << *it << ' ';
                     }
                     cout << endl;
                     char aux;
-                    cout << "tecle s + ENTER para pesquisá-la: "; cin >> aux;
+                    cout << "type 's' + enter to search: "; cin >> aux;
                     if(aux == 's'){
                         clock_t t0 = clock();
                         search_words(suges1, ids);
-                        double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000); // calculando tempo em segundos
-                        cout << "(" << tf << " segundos)" << endl;
-                        cout << "Foram encontrados " << ids.size() << " resultados para sua pesquisa!" << endl;
-                        cout << "Pagínas encontradas: " << endl;
+                        double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC); // calculando tempo em segundos
+                        cout << "(" << tf << " seconds)" << endl;
+                        cout << "About " << ids.size() << " results (" << tf << " seconds) " << endl;
+                        cout << "Pages found: " << endl;
                         getTitle(ids);
                     }
                 }
             }
         }
         else{
-            cout << "Pagínas encontradas para: " << word << endl;
+            cout << "Pages found for: " << word << endl;
             getTitle(ids);
         }
     }
