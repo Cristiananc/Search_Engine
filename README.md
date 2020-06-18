@@ -23,6 +23,7 @@ Feito isso, para executar basta abrir o terminal na pasta "web-server" e digitar
 g++ main.cpp -I /usr/include -lboost_system -lboost_thread -lpthread.
 
 ./a.out
+
 Para visualizar a página acesse http://localhost:8080/index.html.
 
 
