@@ -128,6 +128,14 @@ string createPage(Trie trie, string query, vector<int> &ids, int &count_id){
 }
 
 int main(){
+    DIR *dir;
+    dir = opendir("../for_tree");
+
+    if (!dir)
+    {
+        cout << "Directory not found" << endl;
+        return 0;
+    }
 
     clock_t t0 = clock();
     int c = 0;
