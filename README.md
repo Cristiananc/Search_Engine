@@ -11,12 +11,18 @@ Faça o download do corpus processado no seguinte link: https://github.com/Marco
 Além dos pacotes padrão do c++, você precisa ter os seguintes pacotes: dirent.h e set.
 
 Para rodar a search engine no terminal, pode se utilizar o compilador g++ (ou outro programa de sua preferência):
+
 g++ executeSearch.cpp
+
 ./a.out
 
 Para rodar a interface web da search engine usando um servidor local é preciso que você tenha instalada em seu computador o pacote boost (https://www.boost.org/). 
 
-Feito isso, para executar basta abrir o terminal na pasta "web-server" e digitar: g++ main.cpp -I /usr/include -lboost_system -lboost_thread -lpthread.
+Feito isso, para executar basta abrir o terminal na pasta "web-server" e digitar: 
+
+g++ main.cpp -I /usr/include -lboost_system -lboost_thread -lpthread.
+
+./a.out
 
 Para visualizar a página acesse http://localhost:8080/index.html.
 
