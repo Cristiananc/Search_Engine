@@ -10,7 +10,7 @@ Faça o download do corpus processado no seguinte link: https://github.com/Marco
 
 Além dos pacotes padrão do c++, você precisa ter os seguintes pacotes: dirent.h e set.
 
-Para rodar a search engine no terminal, pode se utilizar o compilador g++ (ou outro programa de sua preferência):
+Para rodar a search engine no terminal, pode-se utilizar o compilador g++ (ou outro programa de sua preferência):
 
 g++ executeSearch.cpp
 

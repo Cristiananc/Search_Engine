@@ -82,7 +82,7 @@ public:
                         if (line.substr(0,8+t) == "<doc id="+to_string(id)) {   //verifica se o id corresponde
                             b = true;
                             size_t pos = line.find("nonfiltered");      // position of "nonfilteres" in string line
-                            texto = texto + line.substr(15 + t, pos - 22);
+                            texto = texto + line.substr(15 + t, pos - 20) + '\n';
                             line = "";
                         }
                         else if(line.size() >= 12) {

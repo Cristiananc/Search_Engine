@@ -62,7 +62,7 @@ string printa(int id) {
                         if (line.substr(0,8+t) == "<doc id="+to_string(id)) {   //verifica se o id corresponde
                             b = true;
                             size_t pos = line.find("nonfiltered");      // position of "nonfilteres" in string line
-                            texto = texto + line.substr(15 + t, pos - 22);
+                            texto = texto + line.substr(15 + t, pos - 20) + '\n';
                             line = "";
                         }
                         else if(line.size() >= 12) {
@@ -98,7 +98,7 @@ string createPage(Trie trie, string query, vector<int> &ids, int &count_id){
 	if(words.size() > 0){
 	    clock_t t0 = clock();
 	    trie.search_words(words, ids);
-		double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC/1000);
+		double tf = ((double)(clock()-t0))/(CLOCKS_PER_SEC);
 		aux =  "\n (" + to_string(tf) + " seconds)" ;
 		aux = aux + "\n" + to_string(ids.size()) + " results were found!";
 
@@ -139,7 +139,7 @@ int main(){
 
     clock_t t0 = clock();
     int c = 0;
-    for(int i = 0; i<135;i++) {
+    for(int i = 0; i<136;i++) {
         trie.leitura("../for_tree/nr_f_ordenado_"+to_string(i)+".txt",i,t0);
     }
 
