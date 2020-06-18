@@ -17,8 +17,7 @@ struct Node{
 	Node *children[ALPHABET_SIZE]; // Alfabeto mais algarismos, 26 + 10 = 36
 
 	Node () {for(int i = 0 ; i < ALPHABET_SIZE ; i++ ){
-    	children[i] = nullptr;
-    	}
+    	children[i] = nullptr;}
 	}
 };
 
@@ -124,41 +123,34 @@ public:
     //Clean the user-input considering the alphabet used in the trie and split words if necessary
     vector<string> clean_input(string words){
     vector<string> wordsToSearch;
-    // Char to convert (numbers as represented in ascci)
-    vector<int> a{65, 131, 132, 133, 134, 142, 143, 160, 181, 182, 183, 198, 199};
-    vector<int> e{69, 130, 136, 137, 138, 144, 210, 211, 212};
-    vector<int> i{73, 139, 140, 141, 161, 214, 215, 216};
-    vector<int> o{79, 147, 148, 149, 153, 162, 224, 226, 227, 228, 229};
-    vector<int> u{85, 129, 150, 151, 154, 163, 233, 234, 235};
-    vector<int> c{67,128,135};
+    // Char to convert (multi-character)
+    vector<int> a{-128, -127, -126, -125, -96, -95, -94, -93};
+    vector<int> e{-120, -119, -118, -88, -87,-86, -68, -67};
+    vector<int> i{-116, -115, -84, -83};
+    vector<int> o{-110, -109, -108, -107, -78,-77, -76, -75, };
+    vector<int> u{-103, -102, -71, -70, };
+    vector<int> c{-121, -89};
+    vector<int> n{-111, -79};
     string word_clean;
 
     for (int j= 0; j < words.length(); j++){
-        int letter = (int) words[j];
+        int letter = words[j];
         //I have to check if the char is in the alphabet, if so
-        if (is_alphabetchar(words[j])){word_clean.push_back(words[j]);
-        }
-        else if(is_uppercase(words[j])){word_clean.push_back(tolower(words[j]));
-        }
+        if (is_alphabetchar(words[j])){word_clean.push_back(words[j]);}
+        else if(is_uppercase(words[j])){word_clean.push_back(tolower(words[j]));}
         else if (find(a.begin(), a.end(), letter) != a.end()){word_clean.push_back('a');}
-        else if (find(e.begin(), e.end(), letter) != e.end()){word_clean.push_back('e');
-        }
-        else if (find(i.begin(), i.end(), letter) != i.end()){word_clean.push_back('i');
-        }
-        else if(find(o.begin(), o.end(), letter) != o.end()){word_clean.push_back('o');
-        }
-        else if(find(u.begin(), u.end(), letter) != u.end()){word_clean.push_back('u');
-        }
-        else if(find(c.begin(), c.end(), letter) != c.end()){word_clean.push_back('c');
-        }
+        else if (find(e.begin(), e.end(), letter) != e.end()){word_clean.push_back('e');}
+        else if (find(i.begin(), i.end(), letter) != i.end()){word_clean.push_back('i');}
+        else if(find(o.begin(), o.end(), letter) != o.end()){word_clean.push_back('o');}
+        else if(find(u.begin(), u.end(), letter) != u.end()){word_clean.push_back('u');}
+        else if(find(c.begin(), c.end(), letter) != c.end()){word_clean.push_back('c');}
+	else if(find(n.begin(), n.end(), letter) != n.end()){word_clean.push_back('n');}
         else if(words[j] == ' '){
             wordsToSearch.push_back(word_clean);
-            word_clean.clear();
-        }
+            word_clean.clear();}
     }
     if(word_clean.length() > 0){
-        wordsToSearch.push_back(word_clean);
-    }
+        wordsToSearch.push_back(word_clean);}
     return wordsToSearch;
 }
 
@@ -458,9 +450,4 @@ void suggestion(string word, set<string> &sugges, int numSuge){
         if (sugges.size() == numSuge){break;}
     }
 }
-
-bool isdigit (char c){
-    return('0' <= c && c <= '9');}
-
 };
-
