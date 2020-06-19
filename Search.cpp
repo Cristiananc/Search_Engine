@@ -350,10 +350,11 @@ public:
                 for(int i = 0; i < words.size(); ++i){
                     if(search(words[i]).empty()){
                         suggestion(words[i], suggestions, n);
-                        for (set<string>::iterator it = suggestions.begin(); it != suggestions.end(); ++it) {
-                            suges1.push_back(*it);
-                            auxI = true;
-                            }
+			set<string>::iterator myIterator = suggestions.begin();
+
+                        suges1.push_back(*myIterator);
+                        auxI = true;
+			suggestions = {};
                         }
                     else{
                         suges1.push_back(words[i]);

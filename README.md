@@ -6,7 +6,7 @@ No arquivo Search.cpp encontra-se a implementação da estrutura de dados Trie u
 
 # Como executar a search engine?
 
-Faça o download do corpus processado no seguinte link: https://bit.ly/2AF3aFZ. As pastas "for_tree" e "originais_ordenados" devem ser descompactadas e devem estar na mesma pasta dos arquivos Search.cpp, executeSearch.cpp e demais arquivos deste repositório.
+Faça o download do corpus processado no seguinte link: https://github.com/Marcos358/3periodo.git. As pastas "for_tree" e "originais_ordenados" devem ser descompactadas e devem estar na mesma pasta dos arquivos Search.cpp, executeSearch.cpp e demais arquivos deste repositório.
 
 Além dos pacotes padrão do c++, você precisa ter os seguintes pacotes: dirent.h e set.
 
@@ -26,4 +26,4 @@ g++ main.cpp -I /usr/include -lboost_system -lboost_thread -lpthread.
 
 Para visualizar a página acesse http://localhost:8080/index.html.
 
-O video de apresentação do trabalho se encontra em:
+O video de apresentação do trabalho se encontra em: https://youtu.be/_WNmKjIBEtw
